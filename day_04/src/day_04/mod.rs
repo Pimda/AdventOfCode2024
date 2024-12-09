@@ -74,9 +74,7 @@ fn is_x_mas(
 ) -> bool {
     offset_directions
         .iter()
-        .filter(|(offset, direction)| {
-            is_word(board, position + *offset, *direction, bounds, "MAS")
-        })
+        .filter(|(offset, direction)| is_word(board, position + *offset, *direction, bounds, "MAS"))
         .count()
         == 2
 }

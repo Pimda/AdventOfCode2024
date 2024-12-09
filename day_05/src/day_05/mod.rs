@@ -77,12 +77,11 @@ fn follows_rule(pages: &Vec<u32>, rule: &Rule) -> bool {
 }
 
 fn order_pile(pages: &Vec<u32>, rules: &[Rule]) -> Vec<u32> {
-    
     let mut temp = pages.to_vec();
 
-    while !is_pile_ordered(&temp, rules){
-        for rule in rules{
-            if !follows_rule(&temp, rule){
+    while !is_pile_ordered(&temp, rules) {
+        for rule in rules {
+            if !follows_rule(&temp, rule) {
                 let left_index = temp.iter().position(|page| *page == rule.left).unwrap();
                 let right_index = temp.iter().position(|page| *page == rule.right).unwrap();
 
@@ -98,7 +97,6 @@ fn order_pile(pages: &Vec<u32>, rules: &[Rule]) -> Vec<u32> {
     }
 
     temp
-
 }
 
 fn get_center_page(pages: &[u32]) -> u32 {
