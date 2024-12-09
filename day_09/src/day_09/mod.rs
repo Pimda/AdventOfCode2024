@@ -61,39 +61,67 @@ impl Day<Vec<u32>, usize, usize> for Impl {
         checksum
     }
 
-    fn part_2(&self, files: &Vec<u32>) -> usize {
+    fn part_2(&self, map: &Vec<u32>) -> usize {
         let mut files = vec![];
         let mut empty_space = vec![];
         let mut id = 0;
+        let mut index = 0;
 
         // fill disk
-        for window in files.chunks(2) {
-            if let [file, space] = window {
-                for _ in 0..*file {
-                    disk.push(Some(id));
-                }
-                for _ in 0..*space {
-                    disk.push(None);
-                }
-            } else if let [file] = window {
-                for _ in 0..*file {
-                    disk.push(Some(id));
-                }
+        for window in map.chunks(2) {
+            if let [size, space] = window {
+                files.push(File {
+                    id,
+                    index,
+                    size: *size,
+                });
+                index += size;
+
+                empty_space.push(FreeSpace {
+                    index,
+                    size: *space,
+                });
+                index += space;
+            } else if let [size] = window {
+                files.push(File {
+                    id,
+                    index,
+                    size: *size,
+                });
+                index += size;
             }
             id += 1;
         }
 
-        todo!()
+        // move files
+        for file in files.iter_mut().rev(){
+            for space in empty_space.iter_mut(){
+                if space.size >= file.size && space.index < file.index{
+                    file.index = space.index;
+                    space.size -= file.size;
+                    space.index += file.size;
+                }
+            }
+        }
+
+        let mut checksum: usize = 0;
+        for file in files.iter(){
+            for i in 0..file.size{
+                let index:usize = (i + file.index).try_into().unwrap();
+                checksum += index * file.id;
+            }
+        }
+        checksum
     }
 }
 
 struct File {
     id: usize,
+    index: u32,
     size: u32,
-    index: usize,
 }
 
 struct FreeSpace {
-    index: usize,
+    index: u32,
     size: u32,
 }
