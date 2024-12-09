@@ -90,8 +90,6 @@ fn order_pile(pages: &Vec<u32>, rules: &[Rule]) -> Vec<u32> {
 
                 temp[left_index] = right;
                 temp[right_index] = left;
-
-                break;
             }
         }
     }
