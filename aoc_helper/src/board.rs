@@ -11,7 +11,7 @@ impl<T> Board<T> {
         Self { board, bounds }
     }
 
-    /// Gets the elemt at given position
+    /// Gets the element at given position
     /// # Examples
     /// ```
     /// use aoc_helper::board::Board;
