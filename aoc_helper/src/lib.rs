@@ -6,3 +6,4 @@ pub mod runner;
 mod timer;
 pub mod vectors;
 pub use day::Day;
+pub mod board;

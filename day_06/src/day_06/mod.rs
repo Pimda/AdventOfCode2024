@@ -1,18 +1,17 @@
-use aoc_helper::{collections::ContainsCollection, vectors::Vec2D, Day};
+use aoc_helper::{board::Board, collections::ContainsCollection, vectors::Vec2D, Day};
 
 #[cfg(test)]
 mod test;
 
 pub(crate) struct Impl {}
 
-impl Day<Vec<Vec<char>>, usize, usize> for Impl {
-    fn parse(&self, input: String) -> Vec<Vec<char>> {
-        input.lines().map(|line| line.chars().collect()).collect()
+impl Day<Board<char>, usize, usize> for Impl {
+    fn parse(&self, input: String) -> Board<char> {
+        Board::new(input.lines().map(|line| line.chars().collect()).collect())
     }
 
-    fn part_1(&self, board: &Vec<Vec<char>>) -> usize {
-        let bounds = get_bounds(board);
-        let mut guard = find_guard(board, bounds);
+    fn part_1(&self, board: &Board<char>) -> usize {
+        let mut guard = find_guard(board);
         let mut visited_fields = ContainsCollection::new();
         let mut direction = Vec2D::new(0, -1);
 
@@ -21,11 +20,11 @@ impl Day<Vec<Vec<char>>, usize, usize> for Impl {
 
             let next_pos = guard + direction;
 
-            if !next_pos.is_in_bounds(bounds) {
+            if !board.is_in_bounds(next_pos){
                 break;
             }
 
-            if get_char(board, next_pos) != '#' {
+            if *board.get(next_pos) != '#' {
                 guard = next_pos;
             } else {
                 // we need to rotate right, but since the coordinate system is flipped, rotating left should be correct
@@ -36,9 +35,8 @@ impl Day<Vec<Vec<char>>, usize, usize> for Impl {
         visited_fields.len()
     }
 
-    fn part_2(&self, board: &Vec<Vec<char>>) -> usize {
-        let bounds = get_bounds(board);
-        let mut guard = find_guard(board, bounds);
+    fn part_2(&self, board: &Board<char>) -> usize {
+        let mut guard = find_guard(board);
         let mut direction = Vec2D::new(0, -1);
         let mut loops = ContainsCollection::new();
 
@@ -48,14 +46,14 @@ impl Day<Vec<Vec<char>>, usize, usize> for Impl {
         loop {
             let next_pos = guard + direction;
 
-            if !next_pos.is_in_bounds(bounds) {
+            if !board.is_in_bounds(next_pos){
                 break;
             }
 
-            if get_char(board, next_pos) != '#' {
+            if *board.get(next_pos) != '#' {
                 guard = next_pos;
 
-                if is_loop(board, start_pos, start_dir, bounds, next_pos) {
+                if is_loop(board, start_pos, start_dir, next_pos) {
                     loops.add_if_not_contains(next_pos);
                 }
             } else {
@@ -68,11 +66,11 @@ impl Day<Vec<Vec<char>>, usize, usize> for Impl {
     }
 }
 
-fn find_guard(board: &[Vec<char>], bounds: Vec2D) -> Vec2D {
-    for y in 0..bounds.y {
-        for x in 0..bounds.x {
+fn find_guard(board: &Board<char>) -> Vec2D {
+    for y in 0..board.get_bounds().y {
+        for x in 0..board.get_bounds().x {
             let pos = Vec2D::new(x, y);
-            if get_char(board, pos) == '^' {
+            if *board.get(pos) == '^' {
                 return pos;
             }
         }
@@ -81,28 +79,10 @@ fn find_guard(board: &[Vec<char>], bounds: Vec2D) -> Vec2D {
     panic!("Guard not found")
 }
 
-fn get_char(board: &[Vec<char>], pos: Vec2D) -> char {
-    *board
-        .iter()
-        .nth(pos.y.try_into().unwrap())
-        .unwrap()
-        .iter()
-        .nth(pos.x.try_into().unwrap())
-        .unwrap()
-}
-
-fn get_bounds(board: &[Vec<char>]) -> Vec2D {
-    let width = board.first().unwrap().len();
-    let height = board.len();
-
-    Vec2D::new(width.try_into().unwrap(), height.try_into().unwrap())
-}
-
 fn is_loop(
-    board: &[Vec<char>],
+    board: &Board<char>,
     mut pos: Vec2D,
     mut dir: Vec2D,
-    bounds: Vec2D,
     obstacle: Vec2D,
 ) -> bool {
     let mut visited = ContainsCollection::new();
@@ -112,12 +92,12 @@ fn is_loop(
 
         let next_pos = pos + dir;
 
-        if !next_pos.is_in_bounds(bounds) {
+        if !board.is_in_bounds(next_pos){
             return false;
         }
 
         // check for wall or extra obstacle
-        if get_char(board, next_pos) != '#' && next_pos != obstacle {
+        if *board.get(next_pos) != '#' && next_pos != obstacle {
             pos = next_pos;
         } else {
             // we need to rotate right, but since the coordinate system is flipped, rotating left should be correct
