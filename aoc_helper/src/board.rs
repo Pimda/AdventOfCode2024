@@ -11,6 +11,15 @@ impl<T> Board<T> {
         Self { board, bounds }
     }
 
+    /// Gets the elemt at given position
+    /// # Examples
+    /// ```
+    /// use aoc_helper::board::Board;
+    /// use aoc_helper::vectors::Vec2D;
+    /// let board = Board::new(vec![vec![1, 2]]);
+    /// assert_eq!(1, *board.get(Vec2D::new(0, 0)));
+    /// assert_eq!(2, *board.get(Vec2D::new(1, 0)));
+    /// ```
     pub fn get(&self, pos: Vec2D) -> &T {
         self.board
             .get::<usize>(pos.y.try_into().unwrap())
@@ -19,10 +28,29 @@ impl<T> Board<T> {
             .unwrap()
     }
 
+    /// Checks whether a point is inside the board
+    /// # Examples
+    /// ```
+    /// use aoc_helper::board::Board;
+    /// use aoc_helper::vectors::Vec2D;
+    /// let board = Board::new(vec![vec![1, 2]]);
+    /// assert_eq!(true, board.is_in_bounds(Vec2D::new(1, 0)));
+    /// assert_eq!(false, board.is_in_bounds(Vec2D::new(-1, 0)));
+    /// assert_eq!(false, board.is_in_bounds(Vec2D::new(1, 2)));
+    /// ```
     pub fn is_in_bounds(&self, pos: Vec2D) -> bool {
         pos.is_in_bounds(self.bounds)
     }
 
+    /// Returns the bounds of the board
+    /// # Examples
+    /// ```
+    /// use aoc_helper::board::Board;
+    /// let board = Board::new(vec![vec![1, 2]]);
+    /// let bounds = board.get_bounds();
+    /// assert_eq!(1, bounds.y);
+    /// assert_eq!(2, bounds.x);
+    /// ```
     pub fn get_bounds(&self) -> Vec2D {
         self.bounds
     }
