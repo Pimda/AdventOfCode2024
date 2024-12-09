@@ -1,55 +1,45 @@
-use std::collections::HashMap;
-
-use aoc_helper::Day;
+use aoc_helper::{collections::CountCollection, Day};
 
 #[cfg(test)]
 mod test;
 
 pub(crate) struct Impl {}
 
-impl Day<[Vec<i32>; 2], i32, i32> for Impl {
-    fn parse(&self, input: String) -> [Vec<i32>; 2] {
-        let vec1 = input
+impl Day<(Vec<i32>, Vec<i32>), i32, i32> for Impl {
+    fn parse(&self, input: String) -> (Vec<i32>, Vec<i32>) {
+        input
             .lines()
-            .map(|line| line.split("   ").nth(0).unwrap().parse().unwrap())
-            .collect();
-        let vec2 = input
-            .lines()
-            .map(|line| line.split("   ").nth(1).unwrap().parse().unwrap())
-            .collect();
-
-        [vec1, vec2]
+            .map(|line| {
+                if let Some((left, right)) = line.split_once("   ") {
+                    let lhs: i32 = left.parse().unwrap();
+                    let rhs: i32 = right.parse().unwrap();
+                    (lhs, rhs)
+                } else {
+                    panic!("invalid input")
+                }
+            })
+            .unzip()
     }
 
-    fn part_1(&self, lists: &[Vec<i32>; 2]) -> i32 {
-        let [vec1, vec2] = lists;
+    fn part_1(&self, (vec1, vec2): &(Vec<i32>, Vec<i32>)) -> i32 {
+        let mut vec1 = vec1.clone();
+        let mut vec2 = vec2.clone();
+        vec1.sort_unstable();
+        vec2.sort_unstable();
 
-        let mut vec1 = vec1.to_vec();
-        let mut vec2 = vec2.to_vec();
-        vec1.sort();
-        vec2.sort();
-
-        vec1.iter().zip(vec2).map(dist).sum()
+        vec1.iter().zip(vec2).map(distance).sum()
     }
 
-    fn part_2(&self, lists: &[Vec<i32>; 2]) -> i32 {
-        let [vec1, vec2] = lists;
-
-        let mut test: HashMap<i32, i32> = vec1.iter().map(|key| (key.to_owned(), 0)).collect();
-
-        for key2 in vec2 {
-            if let Some(count_ref) = test.get_mut(key2) {
-                *count_ref += 1;
-            }
-        }
-
-        vec1.iter()
-            .map(|key| score(*key, *test.get(key).unwrap()))
+    fn part_2(&self, (numbers, counts): &(Vec<i32>, Vec<i32>)) -> i32 {
+        let counts = CountCollection::from_vec(counts);
+        numbers
+            .iter()
+            .map(|number| score(*number, counts.count(number).try_into().unwrap()))
             .sum()
     }
 }
 
-fn dist(pair: (&i32, i32)) -> i32 {
+fn distance(pair: (&i32, i32)) -> i32 {
     (pair.0 - pair.1).abs()
 }
 

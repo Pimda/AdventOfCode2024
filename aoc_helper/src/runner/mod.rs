@@ -55,7 +55,7 @@ impl<'a, I, O1, O2> Runner<'a, I, O1, O2> {
     {
         if let Some(input) = &self.parsed {
             let now = timer::start_timer();
-            let result = self.day.part_1(&input);
+            let result = self.day.part_1(input);
             timer::stop_timer_and_write(now, "Part 1");
 
             println!("{}", result);

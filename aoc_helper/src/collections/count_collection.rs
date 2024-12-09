@@ -13,6 +13,21 @@ impl<T> CountCollection<T> {
         }
     }
 
+    pub fn from_vec(inputs: &Vec<T>) -> Self
+    where
+        T: Hash,
+        T: Eq,
+        T: Clone,
+    {
+        let mut count = Self::new();
+
+        for input in inputs {
+            count.add(input.to_owned());
+        }
+
+        count
+    }
+
     pub fn count(&self, key: &T) -> u32
     where
         T: Hash,
