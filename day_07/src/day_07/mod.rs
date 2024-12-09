@@ -69,19 +69,14 @@ fn is_valid_2(result: u64, accumulator: u64, index: usize, numbers: &[u64]) -> b
 
     is_valid_2(result, num + accumulator, index + 1, numbers)
         || is_valid_2(result, num * accumulator, index + 1, numbers)
-        || is_valid_2(
-            result,
-            concat_numbers(accumulator, num),
-            index + 1,
-            numbers,
-        )
+        || is_valid_2(result, concat_numbers(accumulator, num), index + 1, numbers)
 }
 
 // required because somehow adding two nums as strings and parsing it again is very slow
 fn concat_numbers(accumulator: u64, num: u64) -> u64 {
     let mut mul = 10;
-    
-    while mul <= num{
+
+    while mul <= num {
         mul *= 10;
     }
 

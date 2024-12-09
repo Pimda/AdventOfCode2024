@@ -86,9 +86,9 @@ fn find_guard(board: &Board<char>) -> Vec2D {
 fn is_loop(board: &Board<char>, mut pos: Vec2D, mut dir: Vec2D, obstacle: Vec2D) -> bool {
     let mut visited = ContainsCollection::new();
 
-    loop{    
+    loop {
         let next_pos = pos + dir;
-        
+
         if !board.is_in_bounds(next_pos) {
             return false;
         }
@@ -97,11 +97,10 @@ fn is_loop(board: &Board<char>, mut pos: Vec2D, mut dir: Vec2D, obstacle: Vec2D)
         if *board.get(next_pos) != '#' && next_pos != obstacle {
             pos = next_pos;
         } else {
-
             // Only check if we reached a loop at every corner
             // this saves a lot of processing and will at most let us overlap our loop for a few steps
-            if visited.contains(&(pos, dir)){
-                return true
+            if visited.contains(&(pos, dir)) {
+                return true;
             }
             visited.add_if_not_contains((pos, dir));
 

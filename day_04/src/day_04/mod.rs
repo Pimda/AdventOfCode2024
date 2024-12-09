@@ -32,9 +32,7 @@ impl Day<Board<char>, usize, usize> for Impl {
 
                         directions
                             .into_iter()
-                            .filter(|direction| {
-                                is_word(board, position, *direction, "XMAS")
-                            })
+                            .filter(|direction| is_word(board, position, *direction, "XMAS"))
                             .count()
                     })
                     .sum::<usize>()
@@ -62,11 +60,7 @@ impl Day<Board<char>, usize, usize> for Impl {
     }
 }
 
-fn is_x_mas(
-    offset_directions: [(Vec2D, Vec2D); 4],
-    board: &Board<char>,
-    position: Vec2D,
-) -> bool {
+fn is_x_mas(offset_directions: [(Vec2D, Vec2D); 4], board: &Board<char>, position: Vec2D) -> bool {
     offset_directions
         .iter()
         .filter(|(offset, direction)| is_word(board, position + *offset, *direction, "MAS"))
@@ -74,12 +68,7 @@ fn is_x_mas(
         == 2
 }
 
-fn is_word(
-    board: &Board<char>,
-    mut position: Vec2D,
-    direction: Vec2D,
-    string: &str,
-) -> bool {
+fn is_word(board: &Board<char>, mut position: Vec2D, direction: Vec2D, string: &str) -> bool {
     for c in string.chars() {
         // Do a bounds check before retrieving the char
         if !board.is_in_bounds(position) {

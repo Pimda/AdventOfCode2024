@@ -94,9 +94,9 @@ impl Day<Vec<u32>, usize, usize> for Impl {
         }
 
         // move files
-        for file in files.iter_mut().rev(){
-            for space in empty_space.iter_mut(){
-                if space.size >= file.size && space.index < file.index{
+        for file in files.iter_mut().rev() {
+            for space in empty_space.iter_mut() {
+                if space.size >= file.size && space.index < file.index {
                     file.index = space.index;
                     space.size -= file.size;
                     space.index += file.size;
@@ -105,9 +105,9 @@ impl Day<Vec<u32>, usize, usize> for Impl {
         }
 
         let mut checksum: usize = 0;
-        for file in files.iter(){
-            for i in 0..file.size{
-                let index:usize = (i + file.index).try_into().unwrap();
+        for file in files.iter() {
+            for i in 0..file.size {
+                let index: usize = (i + file.index).try_into().unwrap();
                 checksum += index * file.id;
             }
         }

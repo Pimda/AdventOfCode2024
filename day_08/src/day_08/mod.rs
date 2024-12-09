@@ -51,7 +51,7 @@ impl Day<Board<char>, usize, usize> for Impl {
     }
 }
 
-fn _print_board(board: &Board<char>, nodes: &ContainsCollection<Vec2D>, ) {
+fn _print_board(board: &Board<char>, nodes: &ContainsCollection<Vec2D>) {
     for y in 0..board.get_bounds().y {
         for x in 0..board.get_bounds().x {
             let index = Vec2D::new(x, y);
@@ -76,7 +76,7 @@ fn find_anti_nodes(board: &Board<char>, index: Vec2D, char: char) -> Vec<Vec2D> 
                 let offset = check_index - index;
                 let node = check_index + offset;
 
-                if board.is_in_bounds(node){
+                if board.is_in_bounds(node) {
                     nodes.push(node);
                 }
             }
@@ -86,11 +86,7 @@ fn find_anti_nodes(board: &Board<char>, index: Vec2D, char: char) -> Vec<Vec2D> 
     nodes
 }
 
-fn find_coninuous_anti_nodes(
-    board: &Board<char>,
-    index: Vec2D,
-    char: char,
-) -> Vec<Vec2D> {
+fn find_coninuous_anti_nodes(board: &Board<char>, index: Vec2D, char: char) -> Vec<Vec2D> {
     let mut nodes = vec![];
 
     for y in 0..board.get_bounds().y {
@@ -100,7 +96,7 @@ fn find_coninuous_anti_nodes(
                 let offset = check_index - index;
                 let mut node = check_index;
 
-                while board.is_in_bounds(node){
+                while board.is_in_bounds(node) {
                     nodes.push(node);
                     node = node + offset;
                 }
