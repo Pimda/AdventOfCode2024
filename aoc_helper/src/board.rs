@@ -14,11 +14,9 @@ impl <T> Board<T>{
 
     pub fn get(&self, pos: Vec2D) -> &T {
         self.board
-            .iter()
-            .nth(pos.y.try_into().unwrap())
+            .get::<usize>(pos.y.try_into().unwrap())
             .unwrap()
-            .iter()
-            .nth(pos.x.try_into().unwrap())
+            .get::<usize>(pos.x.try_into().unwrap())
             .unwrap()
     }
 

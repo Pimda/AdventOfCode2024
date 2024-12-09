@@ -20,7 +20,7 @@ impl Day<Board<char>, usize, usize> for Impl {
 
             let next_pos = guard + direction;
 
-            if !board.is_in_bounds(next_pos){
+            if !board.is_in_bounds(next_pos) {
                 break;
             }
 
@@ -39,23 +39,27 @@ impl Day<Board<char>, usize, usize> for Impl {
         let mut guard = find_guard(board);
         let mut direction = Vec2D::new(0, -1);
         let mut loops = ContainsCollection::new();
-
-        let start_pos = guard;
-        let start_dir = direction;
+        let mut checked_positions = ContainsCollection::new();
 
         loop {
             let next_pos = guard + direction;
 
-            if !board.is_in_bounds(next_pos){
+            if !board.is_in_bounds(next_pos) {
                 break;
             }
 
             if *board.get(next_pos) != '#' {
-                guard = next_pos;
+                // only check a position once (also makes sure we're not testing a broken path)
+                if !checked_positions.contains(&next_pos) {
+                    // use the current position and direction, so we don't need to walk the whole path again
+                    if is_loop(board, guard, direction, next_pos) {
+                        loops.add_if_not_contains(next_pos);
+                    }
 
-                if is_loop(board, start_pos, start_dir, next_pos) {
-                    loops.add_if_not_contains(next_pos);
+                    checked_positions.add_if_not_contains(next_pos);
                 }
+
+                guard = next_pos;
             } else {
                 // we need to rotate right, but since the coordinate system is flipped, rotating left should be correct
                 direction.rotate_left();
@@ -79,12 +83,7 @@ fn find_guard(board: &Board<char>) -> Vec2D {
     panic!("Guard not found")
 }
 
-fn is_loop(
-    board: &Board<char>,
-    mut pos: Vec2D,
-    mut dir: Vec2D,
-    obstacle: Vec2D,
-) -> bool {
+fn is_loop(board: &Board<char>, mut pos: Vec2D, mut dir: Vec2D, obstacle: Vec2D) -> bool {
     let mut visited = ContainsCollection::new();
 
     while !visited.contains(&(pos, dir)) {
@@ -92,7 +91,7 @@ fn is_loop(
 
         let next_pos = pos + dir;
 
-        if !board.is_in_bounds(next_pos){
+        if !board.is_in_bounds(next_pos) {
             return false;
         }
 
