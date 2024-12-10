@@ -96,7 +96,11 @@ impl Day<Vec<u32>, usize, usize> for Impl {
         // move files
         for file in files.iter_mut().rev() {
             for space in empty_space.iter_mut() {
-                if space.size >= file.size && space.index < file.index {
+                if space.index >= file.index{
+                    break;
+                }
+
+                if space.size >= file.size{
                     file.index = space.index;
                     space.size -= file.size;
                     space.index += file.size;
