@@ -1,9 +1,9 @@
 [package]
-name = "day_2"
+name = "day_02"
 version = "0.1.0"
 edition = "2021"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-aoc_helper = { path = "../aoc_helper"}
+aoc_helper = { path = "../aoc_helper" }

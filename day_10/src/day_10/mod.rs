@@ -82,11 +82,7 @@ fn count_trails(
     count
 }
 
-fn count_trails_2(
-    board: &Board<u32>,
-    coordinate: aoc_helper::vectors::Vec2D,
-    height: u32,
-) -> u32 {
+fn count_trails_2(board: &Board<u32>, coordinate: aoc_helper::vectors::Vec2D, height: u32) -> u32 {
     let directions = vec![
         Vec2D::new(0, 1),
         Vec2D::new(1, 0),

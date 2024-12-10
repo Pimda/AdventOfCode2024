@@ -73,14 +73,19 @@ fn is_valid_2(result: u64, accumulator: u64, index: usize, numbers: &[u64]) -> b
 }
 
 // required because somehow adding two nums as strings and parsing it again is very slow
-fn concat_numbers(accumulator: u64, num: u64) -> u64 {
-    let mut mul = 10;
+// fn concat_numbers(accumulator: u64, num: u64) -> u64 {
+//     let mut mul = 10;
 
-    while mul <= num {
-        mul *= 10;
-    }
+//     while mul <= num {
+//         mul *= 10;
+//     }
 
-    accumulator * mul + num
+//     accumulator * mul + num
+// }
+
+fn concat_numbers(a: u64, b: u64) -> u64 {
+    let b_digits = b.ilog(10) + 1;
+    a * 10_u64.pow(b_digits) + b
 }
 
 fn get_num(numbers: &[u64], index: usize) -> u64 {

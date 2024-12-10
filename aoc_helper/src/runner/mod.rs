@@ -49,6 +49,23 @@ impl<'a, I, O1, O2> Runner<'a, I, O1, O2> {
         }
     }
 
+    pub fn from_string<D>(input: String, day: &'a D) -> Self
+    where
+        D: Day<I, O1, O2>,
+    {
+        let now = timer::start_timer();
+
+        let parsed = day.parse(input);
+
+        timer::stop_timer_and_write(now, "Read input from binary and parse");
+        println!();
+
+        Self {
+            parsed: Some(parsed),
+            day,
+        }
+    }
+
     pub fn part_1(&self)
     where
         O1: Display,
