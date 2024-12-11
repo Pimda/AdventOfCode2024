@@ -5,12 +5,15 @@ mod test;
 
 pub(crate) struct Impl {}
 
-impl Day<Vec<u32>, usize, usize> for Impl {
-    fn parse(&self, input: String) -> Vec<u32> {
-        input.chars().map(|c| c.to_digit(10).unwrap()).collect()
+impl Day<Vec<u64>, usize, u64> for Impl {
+    fn parse(&self, input: String) -> Vec<u64> {
+        input
+            .chars()
+            .map(|c| c.to_digit(10).unwrap().try_into().unwrap())
+            .collect()
     }
 
-    fn part_1(&self, files: &Vec<u32>) -> usize {
+    fn part_1(&self, files: &Vec<u64>) -> usize {
         let mut disk = vec![];
         let mut id = 0;
 
@@ -61,7 +64,7 @@ impl Day<Vec<u32>, usize, usize> for Impl {
         checksum
     }
 
-    fn part_2(&self, map: &Vec<u32>) -> usize {
+    fn part_2(&self, map: &Vec<u64>) -> u64 {
         let mut files = vec![];
         let mut empty_space = vec![];
         let mut id = 0;
@@ -108,24 +111,24 @@ impl Day<Vec<u32>, usize, usize> for Impl {
             }
         }
 
-        let mut checksum: usize = 0;
-        for file in files.iter() {
-            for i in 0..file.size {
-                let index: usize = (i + file.index).try_into().unwrap();
-                checksum += index * file.id;
-            }
-        }
-        checksum
+        files
+            .iter()
+            .map(|file| {
+                (0..file.size)
+                    .map(|i| (i + file.index) * file.id)
+                    .sum::<u64>()
+            })
+            .sum()
     }
 }
 
 struct File {
-    id: usize,
-    index: u32,
-    size: u32,
+    id: u64,
+    index: u64,
+    size: u64,
 }
 
 struct FreeSpace {
-    index: u32,
-    size: u32,
+    index: u64,
+    size: u64,
 }
