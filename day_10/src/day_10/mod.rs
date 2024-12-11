@@ -17,6 +17,7 @@ impl Day<Board<u32>, u32, u32> for Impl {
 
     fn part_1(&self, board: &Board<u32>) -> u32 {
         let mut trail_count = 0;
+        let directions = aoc_helper::navigation::get_adjecent_directions();
 
         for y in 0..board.get_bounds().y {
             for x in 0..board.get_bounds().x {
@@ -24,7 +25,8 @@ impl Day<Board<u32>, u32, u32> for Impl {
                 let coordinate = Vec2D::new(x, y);
 
                 if *board.get(coordinate) == 0 {
-                    trail_count += count_trails(board, coordinate, 1, &mut found_nines);
+                    trail_count +=
+                        count_trails(board, coordinate, 1, &mut found_nines, &directions);
                 }
             }
         }
@@ -34,13 +36,14 @@ impl Day<Board<u32>, u32, u32> for Impl {
 
     fn part_2(&self, board: &Board<u32>) -> u32 {
         let mut trail_count = 0;
+        let directions = aoc_helper::navigation::get_adjecent_directions();
 
         for y in 0..board.get_bounds().y {
             for x in 0..board.get_bounds().x {
                 let coordinate = Vec2D::new(x, y);
 
                 if *board.get(coordinate) == 0 {
-                    trail_count += count_trails_2(board, coordinate, 1);
+                    trail_count += count_trails_2(board, coordinate, 1, &directions);
                 }
             }
         }
@@ -54,13 +57,8 @@ fn count_trails(
     coordinate: aoc_helper::vectors::Vec2D,
     height: u32,
     found_nines: &mut ContainsCollection<Vec2D>,
+    directions: &[Vec2D; 4],
 ) -> u32 {
-    let directions = vec![
-        Vec2D::new(0, 1),
-        Vec2D::new(1, 0),
-        Vec2D::new(0, -1),
-        Vec2D::new(-1, 0),
-    ];
     let mut count = 0;
 
     if height == 10 {
@@ -72,23 +70,22 @@ fn count_trails(
     }
 
     for dir in directions {
-        let new_pos = coordinate + dir;
+        let new_pos = coordinate + *dir;
 
         if board.is_in_bounds(new_pos) && *board.get(new_pos) == height {
-            count += count_trails(board, new_pos, height + 1, found_nines)
+            count += count_trails(board, new_pos, height + 1, found_nines, directions)
         }
     }
 
     count
 }
 
-fn count_trails_2(board: &Board<u32>, coordinate: aoc_helper::vectors::Vec2D, height: u32) -> u32 {
-    let directions = vec![
-        Vec2D::new(0, 1),
-        Vec2D::new(1, 0),
-        Vec2D::new(0, -1),
-        Vec2D::new(-1, 0),
-    ];
+fn count_trails_2(
+    board: &Board<u32>,
+    coordinate: aoc_helper::vectors::Vec2D,
+    height: u32,
+    directions: &[Vec2D; 4],
+) -> u32 {
     let mut count = 0;
 
     if height == 10 {
@@ -96,10 +93,10 @@ fn count_trails_2(board: &Board<u32>, coordinate: aoc_helper::vectors::Vec2D, he
     }
 
     for dir in directions {
-        let new_pos = coordinate + dir;
+        let new_pos = coordinate + *dir;
 
         if board.is_in_bounds(new_pos) && *board.get(new_pos) == height {
-            count += count_trails_2(board, new_pos, height + 1)
+            count += count_trails_2(board, new_pos, height + 1, directions)
         }
     }
 
