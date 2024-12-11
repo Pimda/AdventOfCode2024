@@ -39,8 +39,7 @@ fn blink(node: u64, times: u32, memoizer: &mut MemoizerCollection<(u64, u32), us
 
     // even digits => split at center
     if let Some((left, right)) = split_if_even_digits(node) {
-        let count = blink(left, times - 1, memoizer)
-            + blink(right, times - 1, memoizer);
+        let count = blink(left, times - 1, memoizer) + blink(right, times - 1, memoizer);
         return memoizer.add_and_return((node, times), count);
     }
 
@@ -64,7 +63,7 @@ fn split_if_even_digits(num: u64) -> Option<(u64, u64)> {
         check *= 10;
         div *= 10;
         if num < check {
-            return Some((num / div, num % div))
+            return Some((num / div, num % div));
         }
     }
 }

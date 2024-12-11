@@ -5,7 +5,7 @@ pub struct Board<T> {
     bounds: Vec2D,
 }
 
-impl<T> Board<T> {
+impl<'a, T> Board<T> {
     pub fn new(board: Vec<Vec<T>>) -> Self {
         let bounds = Self::calc_bounds(&board);
         Self { board, bounds }
@@ -53,6 +53,14 @@ impl<T> Board<T> {
     /// ```
     pub fn get_bounds(&self) -> Vec2D {
         self.bounds
+    }
+
+    pub fn iter_all_coordinates(&'a self) -> impl Iterator<Item = Vec2D> + use<'a, T> {
+        let bounds = self.get_bounds();
+
+        (0..bounds.y)
+            .map(move |y| (0..bounds.x).map(move |x| Vec2D::new(x, y)))
+            .flatten()
     }
 
     fn calc_bounds(board: &[Vec<T>]) -> Vec2D {
