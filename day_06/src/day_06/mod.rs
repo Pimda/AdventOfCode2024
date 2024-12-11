@@ -71,16 +71,11 @@ impl Day<Board<char>, usize, usize> for Impl {
 }
 
 fn find_guard(board: &Board<char>) -> Vec2D {
-    for y in 0..board.get_bounds().y {
-        for x in 0..board.get_bounds().x {
-            let pos = Vec2D::new(x, y);
-            if *board.get(pos) == '^' {
-                return pos;
-            }
-        }
-    }
-
-    panic!("Guard not found")
+    board
+        .iter_all_coordinates()
+        .filter(|pos| *board.get(*pos) == '^')
+        .next()
+        .unwrap()
 }
 
 fn is_loop(board: &Board<char>, mut pos: Vec2D, mut dir: Vec2D, obstacle: Vec2D) -> bool {
@@ -108,6 +103,4 @@ fn is_loop(board: &Board<char>, mut pos: Vec2D, mut dir: Vec2D, obstacle: Vec2D)
             dir.rotate_left();
         }
     }
-
-    // true
 }
