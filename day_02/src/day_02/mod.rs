@@ -63,10 +63,8 @@ fn two_array_to_tuple(pair: &[i32]) -> (i32, i32) {
 
 fn is_smoothly_increasing((lhs, rhs): (i32, i32)) -> bool {
     (1..=3).contains(&(rhs - lhs))
-    // lhs < rhs && rhs - lhs <= 3
 }
 
 fn is_smoothly_decreasing((lhs, rhs): (i32, i32)) -> bool {
     (1..=3).contains(&(lhs - rhs))
-    // rhs < lhs && lhs - rhs <= 3
 }
