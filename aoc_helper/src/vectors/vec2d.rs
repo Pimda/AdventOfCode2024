@@ -5,7 +5,7 @@ use std::{
 };
 
 /// Can be used when negative values are possible
-#[derive(Clone, Copy, Eq, PartialEq, Hash)]
+#[derive(Clone, Copy, Eq, PartialEq, Hash, Debug)]
 pub struct Vec2D {
     pub x: i32,
     pub y: i32,
