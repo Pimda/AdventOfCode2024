@@ -7,12 +7,14 @@ pub struct CountCollection<T> {
 }
 
 impl<T> CountCollection<T> {
+    #[must_use]
     pub fn new() -> Self {
         Self {
             map: HashMap::new(),
         }
     }
 
+    #[must_use]
     pub fn from_vec(inputs: &Vec<T>) -> Self
     where
         T: Hash,

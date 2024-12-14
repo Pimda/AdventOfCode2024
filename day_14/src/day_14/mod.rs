@@ -1,4 +1,6 @@
-use aoc_helper::{collections::ContainsCollection, math::positive_mod, vectors::Vec2D, Day};
+use std::collections::HashSet;
+
+use aoc_helper::{math::positive_mod, vectors::Vec2D, Day};
 
 #[cfg(test)]
 mod test;
@@ -87,29 +89,29 @@ impl Day<Vec<(Vec2D, Vec2D)>, usize, i32> for Impl {
             seconds += 1;
 
             if seconds % height == key_1 && seconds % width == key_2 {
-                let mut new_positions = ContainsCollection::new();
-                for robot in robots.iter() {
+                let mut new_positions = HashSet::new();
+                for robot in robots {
                     let new_x = positive_mod(robot.0.x + seconds * robot.1.x, width);
                     let new_y = positive_mod(robot.0.y + seconds * robot.1.y, height);
-                    new_positions.add_if_not_contains(Vec2D::new(new_x, new_y));
+                    new_positions.insert(Vec2D::new(new_x, new_y));
                 }
-                print(height, width, new_positions);
+                print(height, width, &new_positions);
                 return seconds;
             }
         }
     }
 }
 
-fn print(height: i32, width: i32, new_positions: ContainsCollection<Vec2D>) {
+fn print(height: i32, width: i32, new_positions: &HashSet<Vec2D>) {
     for y in 0..height {
         for x in 0..width {
             let pos = Vec2D::new(x, y);
             if new_positions.contains(&pos) {
-                print!("*")
+                print!("*");
             } else {
-                print!(" ")
+                print!(" ");
             }
         }
-        println!()
+        println!();
     }
 }

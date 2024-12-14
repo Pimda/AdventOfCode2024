@@ -25,6 +25,7 @@ pub fn positive_mod(value: i32, modulus: i32) -> i32 {
 ///assert_eq!(false, ranges_fully_overlap(&(3, 6), &(0, 3)));
 ///assert_eq!(false, ranges_fully_overlap(&(0, 3), &(4, 7)))
 ///```
+#[must_use]
 pub fn ranges_fully_overlap(lhs: &(i32, i32), rhs: &(i32, i32)) -> bool {
     let (ll, lu) = lhs;
     let (rl, ru) = rhs;
@@ -49,6 +50,7 @@ pub fn ranges_fully_overlap(lhs: &(i32, i32), rhs: &(i32, i32)) -> bool {
 ///use aoc_helper::math::ranges_partially_overlap;
 ///assert_eq!(false, ranges_partially_overlap(&(0, 3), &(4, 7)))
 ///```
+#[must_use]
 pub fn ranges_partially_overlap(lhs: &(i32, i32), rhs: &(i32, i32)) -> bool {
     let (ll, lu) = lhs;
     let (rl, ru) = rhs;

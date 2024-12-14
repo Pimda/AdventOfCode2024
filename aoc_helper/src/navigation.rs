@@ -1,5 +1,6 @@
 use crate::vectors::Vec2D;
 
+#[must_use]
 pub fn get_adjecent_directions() -> [Vec2D; 4] {
     [
         Vec2D::new(-1, 0),
@@ -9,6 +10,7 @@ pub fn get_adjecent_directions() -> [Vec2D; 4] {
     ]
 }
 
+#[must_use]
 pub fn get_adjecent_directions_including_self() -> [Vec2D; 5] {
     [
         Vec2D::new(-1, 0),
@@ -19,6 +21,7 @@ pub fn get_adjecent_directions_including_self() -> [Vec2D; 5] {
     ]
 }
 
+#[must_use]
 pub fn get_all_surrounding_directions() -> [Vec2D; 8] {
     [
         Vec2D::new(-1, 0),
@@ -33,6 +36,7 @@ pub fn get_all_surrounding_directions() -> [Vec2D; 8] {
 }
 
 #[deprecated(since = "0.1.0", note = "please use `Vec2D.is_in_bounds` instead")]
+#[must_use]
 pub fn check_in_bounds(point: &Vec2D, width: u32, height: u32) -> bool {
     point.x >= 0
         && point.x < width.try_into().expect("Width not in bounds of i32")

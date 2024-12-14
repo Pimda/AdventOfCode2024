@@ -26,7 +26,7 @@ impl Day<(Vec<Rule>, Vec<Vec<u32>>), u32, u32> for Impl {
                     });
                 }
             } else {
-                pages.push(line.split(',').map(|v| v.parse().unwrap()).collect())
+                pages.push(line.split(',').map(|v| v.parse().unwrap()).collect());
             }
         }
 

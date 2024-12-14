@@ -13,7 +13,7 @@ impl Day<Vec<(u64, Vec<u64>)>, u64, u64> for Impl {
                 if let [result, rest] = line.split(": ").collect::<Vec<&str>>()[..] {
                     (
                         result.parse().expect("not a number"),
-                        rest.split(" ")
+                        rest.split(' ')
                             .map(|num| num.parse().expect("not a number"))
                             .collect(),
                     )

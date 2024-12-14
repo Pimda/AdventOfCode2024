@@ -12,32 +12,35 @@ pub struct Vec2D {
 }
 
 impl Vec2D {
+    #[must_use]
     pub fn new(x: i32, y: i32) -> Self {
         Self { x, y }
     }
 
-    /// Rotates the Vec2D 90 degrees counter clockwise
+    /// Rotates the `Vec2D` 90 degrees counter clockwise
     pub fn rotate_left(&mut self) {
         let x = self.x;
         self.x = -self.y;
         self.y = x;
     }
 
-    /// Rotates the Vec2D 90 degrees clockwise
+    /// Rotates the `Vec2D` 90 degrees clockwise
     pub fn rotate_right(&mut self) {
         let x = self.x;
         self.x = self.y;
         self.y = -x;
     }
 
-    /// Returns a UVec2D or panics, check bounds first to prevent a panic
+    /// Returns a `UVec2D` or panics, check bounds first to prevent a panic
+    #[must_use]
     pub fn to_uvec2d_or_throw(&self) -> UVec2D {
         let x: usize = self.x.try_into().expect("X cannot be converted to usize");
         let y: usize = self.y.try_into().expect("Y cannot be converted to usize");
         UVec2D::new(x, y)
     }
 
-    /// Applies positive modulus to this Vec2D
+    /// Applies positive modulus to this `Vec2D`
+    #[must_use]
     pub fn positive_mod(&self, modulus: &Vec2D) -> Vec2D {
         Vec2D::new(
             math::positive_mod(self.x, modulus.x),
@@ -45,16 +48,19 @@ impl Vec2D {
         )
     }
 
+    #[must_use]
     pub fn manhattan_distance(self, target: Vec2D) -> u32 {
         ((self.x - target.x).abs() + (self.y - target.y).abs()) as u32
     }
 
     /// Checks if the vec is between zero (inclusive) and the upper bounds (exclusive)
+    #[must_use]
     pub fn is_in_bounds(self, bounds: Vec2D) -> bool {
         self.x >= 0 && self.y >= 0 && self.x < bounds.x && self.y < bounds.y
     }
 
-    /// Returns the direction of the Vec2D
+    /// Returns the direction of the `Vec2D`
+    #[must_use]
     pub fn signum(&self) -> Self {
         Self {
             x: self.x.signum(),

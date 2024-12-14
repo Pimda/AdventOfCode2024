@@ -1,4 +1,6 @@
-use aoc_helper::{board::Board, collections::ContainsCollection, vectors::Vec2D, Day};
+use std::collections::HashSet;
+
+use aoc_helper::{board::Board, vectors::Vec2D, Day};
 
 #[cfg(test)]
 mod test;
@@ -22,13 +24,7 @@ impl Day<Board<u32>, u32, u32> for Impl {
             .iter_all_coordinates()
             .filter(|coordinate| *board.get(*coordinate) == 0)
             .map(|coordinate| {
-                count_trails_unique_nines(
-                    board,
-                    coordinate,
-                    1,
-                    &mut ContainsCollection::new(),
-                    &directions,
-                )
+                count_trails_unique_nines(board, coordinate, 1, &mut HashSet::new(), &directions)
             })
             .sum()
     }
@@ -48,7 +44,7 @@ fn count_trails_unique_nines(
     board: &Board<u32>,
     coordinate: aoc_helper::vectors::Vec2D,
     height: u32,
-    found_nines: &mut ContainsCollection<Vec2D>,
+    found_nines: &mut HashSet<Vec2D>,
     directions: &[Vec2D; 4],
 ) -> u32 {
     let mut count = 0;
@@ -57,7 +53,7 @@ fn count_trails_unique_nines(
         if found_nines.contains(&coordinate) {
             return 0;
         }
-        found_nines.add_if_not_contains(coordinate);
+        found_nines.insert(coordinate);
         return 1;
     }
 
@@ -65,7 +61,7 @@ fn count_trails_unique_nines(
         let new_pos = coordinate + *dir;
 
         if board.is_in_bounds(new_pos) && *board.get(new_pos) == height {
-            count += count_trails_unique_nines(board, new_pos, height + 1, found_nines, directions)
+            count += count_trails_unique_nines(board, new_pos, height + 1, found_nines, directions);
         }
     }
 
@@ -88,7 +84,7 @@ fn count_all_trails(
         let new_pos = coordinate + *dir;
 
         if board.is_in_bounds(new_pos) && *board.get(new_pos) == height {
-            count += count_all_trails(board, new_pos, height + 1, directions)
+            count += count_all_trails(board, new_pos, height + 1, directions);
         }
     }
 

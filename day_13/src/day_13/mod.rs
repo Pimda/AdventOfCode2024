@@ -1,3 +1,5 @@
+use std::option::Option;
+
 use aoc_helper::{vectors::Vec2D, Day};
 
 #[cfg(test)]
@@ -29,9 +31,9 @@ impl Day<Vec<(Vec2D, Vec2D, Vec2D)>, i64, i64> for Impl {
         puzzles
             .iter()
             .map(|(button_a, button_b, target)| {
-                calculate_answer(button_a, button_b, target.x.into(), target.y.into())
+                calculate_answer(*button_a, *button_b, target.x.into(), target.y.into())
             })
-            .map(|cost| cost.unwrap_or_default())
+            .map(Option::unwrap_or_default)
             .sum()
     }
 
@@ -40,13 +42,13 @@ impl Day<Vec<(Vec2D, Vec2D, Vec2D)>, i64, i64> for Impl {
             .iter()
             .map(|(button_a, button_b, target)| {
                 calculate_answer(
-                    button_a,
-                    button_b,
-                    target.x as i64 + 10_000_000_000_000i64,
-                    target.y as i64 + 10_000_000_000_000i64,
+                    *button_a,
+                    *button_b,
+                    i64::from(target.x) + 10_000_000_000_000i64,
+                    i64::from(target.y) + 10_000_000_000_000i64,
                 )
             })
-            .map(|cost| cost.unwrap_or_default())
+            .map(Option::unwrap_or_default)
             .sum()
     }
 }
@@ -61,10 +63,10 @@ fn _seek_answer((button_a, button_b, target): (Vec2D, Vec2D, Vec2D)) -> Option<i
 
                 if let Some(lowest) = lowest_cost {
                     if cost < lowest {
-                        lowest_cost = Some(cost)
+                        lowest_cost = Some(cost);
                     }
                 } else {
-                    lowest_cost = Some(cost)
+                    lowest_cost = Some(cost);
                 }
             }
         }
@@ -73,12 +75,7 @@ fn _seek_answer((button_a, button_b, target): (Vec2D, Vec2D, Vec2D)) -> Option<i
     lowest_cost
 }
 
-fn calculate_answer(
-    button_a: &Vec2D,
-    button_b: &Vec2D,
-    target_x: i64,
-    target_y: i64,
-) -> Option<i64> {
+fn calculate_answer(button_a: Vec2D, button_b: Vec2D, target_x: i64, target_y: i64) -> Option<i64> {
     let button_a_x: i64 = button_a.x.into();
     let button_a_y: i64 = button_a.y.into();
     let button_b_x: i64 = button_b.x.into();

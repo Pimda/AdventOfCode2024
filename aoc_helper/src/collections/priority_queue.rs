@@ -2,12 +2,13 @@ use core::hash::Hash;
 use std::collections::{HashMap, VecDeque};
 
 /// Divides items in bins, allowing to either retrieve an item for the lowest or highest key
-/// Uses a VecDeque to save and return the elements, so per bin items are returned FiFo
+/// Uses a `VecDeque` to save and return the elements, so per bin items are returned FiFo
 pub struct PriorityQueue<K, T> {
     bins: HashMap<K, VecDeque<T>>,
 }
 
 impl<K, T> PriorityQueue<K, T> {
+    #[must_use]
     pub fn new() -> Self {
         Self {
             bins: HashMap::new(),

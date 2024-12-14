@@ -1,4 +1,6 @@
-use aoc_helper::{board::Board, collections::ContainsCollection, vectors::Vec2D, Day};
+use std::collections::HashSet;
+
+use aoc_helper::{board::Board, vectors::Vec2D, Day};
 
 #[cfg(test)]
 mod test;
@@ -11,7 +13,7 @@ impl Day<Board<char>, usize, usize> for Impl {
     }
 
     fn part_1(&self, board: &Board<char>) -> usize {
-        let mut nodes = ContainsCollection::new();
+        let mut nodes = HashSet::new();
 
         for y in 0..board.get_bounds().y {
             for x in 0..board.get_bounds().x {
@@ -21,7 +23,7 @@ impl Day<Board<char>, usize, usize> for Impl {
                     let new_nodes = find_anti_nodes(board, index, char);
 
                     for node in new_nodes {
-                        nodes.add_if_not_contains(node);
+                        nodes.insert(node);
                     }
                 }
             }
@@ -31,7 +33,7 @@ impl Day<Board<char>, usize, usize> for Impl {
     }
 
     fn part_2(&self, board: &Board<char>) -> usize {
-        let mut nodes = ContainsCollection::new();
+        let mut nodes = HashSet::new();
 
         for y in 0..board.get_bounds().y {
             for x in 0..board.get_bounds().x {
@@ -41,7 +43,7 @@ impl Day<Board<char>, usize, usize> for Impl {
                     let new_nodes = find_coninuous_anti_nodes(board, index, char);
 
                     for node in new_nodes {
-                        nodes.add_if_not_contains(node);
+                        nodes.insert(node);
                     }
                 }
             }
@@ -51,7 +53,7 @@ impl Day<Board<char>, usize, usize> for Impl {
     }
 }
 
-fn _print_board(board: &Board<char>, nodes: &ContainsCollection<Vec2D>) {
+fn _print_board(board: &Board<char>, nodes: &HashSet<Vec2D>) {
     for y in 0..board.get_bounds().y {
         for x in 0..board.get_bounds().x {
             let index = Vec2D::new(x, y);
@@ -59,10 +61,10 @@ fn _print_board(board: &Board<char>, nodes: &ContainsCollection<Vec2D>) {
             if nodes.contains(&index) {
                 print!("#");
             } else {
-                print!("{}", board.get(index))
+                print!("{}", board.get(index));
             }
         }
-        println!()
+        println!();
     }
 }
 

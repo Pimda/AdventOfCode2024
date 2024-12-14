@@ -22,7 +22,7 @@ impl Day<Vec<u64>, usize, usize> for Impl {
 }
 
 fn blink(node: u64, times: u32, memoizer: &mut MemoizerCollection<(u64, u32), usize>) -> usize {
-    if let Some(count) = memoizer.get((node, times)) {
+    if let Some(count) = memoizer.get(&(node, times)) {
         return *count;
     }
 

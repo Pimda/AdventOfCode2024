@@ -1,4 +1,6 @@
-use aoc_helper::{board::Board, collections::ContainsCollection, vectors::Vec2D, Day};
+use std::collections::HashSet;
+
+use aoc_helper::{board::Board, vectors::Vec2D, Day};
 
 #[cfg(test)]
 mod test;
@@ -12,11 +14,11 @@ impl Day<Board<char>, usize, usize> for Impl {
 
     fn part_1(&self, board: &Board<char>) -> usize {
         let mut guard = find_guard(board);
-        let mut visited_fields = ContainsCollection::new();
+        let mut visited_fields = HashSet::new();
         let mut direction = Vec2D::new(0, -1);
 
         loop {
-            visited_fields.add_if_not_contains(guard);
+            visited_fields.insert(guard);
 
             let next_pos = guard + direction;
 
@@ -24,11 +26,11 @@ impl Day<Board<char>, usize, usize> for Impl {
                 break;
             }
 
-            if *board.get(next_pos) != '#' {
-                guard = next_pos;
-            } else {
+            if *board.get(next_pos) == '#' {
                 // we need to rotate right, but since the coordinate system is flipped, rotating left should be correct
                 direction.rotate_left();
+            } else {
+                guard = next_pos;
             }
         }
 
@@ -38,8 +40,8 @@ impl Day<Board<char>, usize, usize> for Impl {
     fn part_2(&self, board: &Board<char>) -> usize {
         let mut guard = find_guard(board);
         let mut direction = Vec2D::new(0, -1);
-        let mut loops = ContainsCollection::new();
-        let mut checked_positions = ContainsCollection::new();
+        let mut loops = HashSet::new();
+        let mut checked_positions = HashSet::new();
 
         loop {
             let next_pos = guard + direction;
@@ -48,21 +50,21 @@ impl Day<Board<char>, usize, usize> for Impl {
                 break;
             }
 
-            if *board.get(next_pos) != '#' {
+            if *board.get(next_pos) == '#' {
+                // we need to rotate right, but since the coordinate system is flipped, rotating left should be correct
+                direction.rotate_left();
+            } else {
                 // only check a position once (also makes sure we're not testing a broken path)
                 if !checked_positions.contains(&next_pos) {
                     // use the current position and direction, so we don't need to walk the whole path again
                     if is_loop(board, guard, direction, next_pos) {
-                        loops.add_if_not_contains(next_pos);
+                        loops.insert(next_pos);
                     }
 
-                    checked_positions.add_if_not_contains(next_pos);
+                    checked_positions.insert(next_pos);
                 }
 
                 guard = next_pos;
-            } else {
-                // we need to rotate right, but since the coordinate system is flipped, rotating left should be correct
-                direction.rotate_left();
             }
         }
 
@@ -78,7 +80,7 @@ fn find_guard(board: &Board<char>) -> Vec2D {
 }
 
 fn is_loop(board: &Board<char>, mut pos: Vec2D, mut dir: Vec2D, obstacle: Vec2D) -> bool {
-    let mut visited = ContainsCollection::new();
+    let mut visited = HashSet::new();
 
     loop {
         let next_pos = pos + dir;
@@ -96,7 +98,7 @@ fn is_loop(board: &Board<char>, mut pos: Vec2D, mut dir: Vec2D, obstacle: Vec2D)
             if visited.contains(&(pos, dir)) {
                 return true;
             }
-            visited.add_if_not_contains((pos, dir));
+            visited.insert((pos, dir));
 
             // we need to rotate right, but since the coordinate system is flipped, rotating left should be correct
             dir.rotate_left();

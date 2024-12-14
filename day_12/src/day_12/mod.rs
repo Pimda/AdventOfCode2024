@@ -1,4 +1,6 @@
-use aoc_helper::{board::Board, collections::ContainsCollection, vectors::Vec2D, Day};
+use std::collections::HashSet;
+
+use aoc_helper::{board::Board, vectors::Vec2D, Day};
 
 #[cfg(test)]
 mod test;
@@ -12,7 +14,7 @@ impl Day<Board<char>, u64, u64> for Impl {
 
     fn part_1(&self, board: &Board<char>) -> u64 {
         let mut cost = 0;
-        let mut visited = ContainsCollection::new();
+        let mut visited = HashSet::new();
         let directions = aoc_helper::navigation::get_adjecent_directions();
 
         for coord in board.iter_all_coordinates() {
@@ -24,7 +26,7 @@ impl Day<Board<char>, u64, u64> for Impl {
 
     fn part_2(&self, board: &Board<char>) -> u64 {
         let mut cost = 0;
-        let mut visited = ContainsCollection::new();
+        let mut visited = HashSet::new();
         let directions = aoc_helper::navigation::get_adjecent_directions();
 
         for coord in board.iter_all_coordinates() {
@@ -38,7 +40,7 @@ impl Day<Board<char>, u64, u64> for Impl {
 fn get_cost(
     board: &Board<char>,
     coord: aoc_helper::vectors::Vec2D,
-    visited: &mut ContainsCollection<Vec2D>,
+    visited: &mut HashSet<Vec2D>,
     directions: [Vec2D; 4],
 ) -> u64 {
     // The field was already checked
@@ -57,7 +59,7 @@ fn get_cost(
         }
 
         area += 1;
-        visited.add_if_not_contains(coord);
+        visited.insert(coord);
 
         for direction in directions {
             let new_coord = coord + direction;
@@ -84,7 +86,7 @@ fn get_cost(
 fn get_discounted_cost(
     board: &Board<char>,
     coord: aoc_helper::vectors::Vec2D,
-    visited: &mut ContainsCollection<Vec2D>,
+    visited: &mut HashSet<Vec2D>,
     directions: [Vec2D; 4],
 ) -> u64 {
     // The field was already checked
@@ -103,7 +105,7 @@ fn get_discounted_cost(
         }
 
         area += 1;
-        visited.add_if_not_contains(coord);
+        visited.insert(coord);
 
         for direction in directions {
             let new_coord = coord + direction;
@@ -173,15 +175,15 @@ fn count_edges(
     let mut sides = 0;
 
     for coord in all {
-        if column_selector(*coord) != column_id {
+        if column_selector(*coord) == column_id {
+            buffer.push(coord);
+        } else {
             if !buffer.is_empty() {
                 sides += count_sides(buffer, row_selector);
             }
 
             buffer = vec![coord];
-            column_id = column_selector(*coord)
-        } else {
-            buffer.push(coord);
+            column_id = column_selector(*coord);
         }
     }
     if !buffer.is_empty() {

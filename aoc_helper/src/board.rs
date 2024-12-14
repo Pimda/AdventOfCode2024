@@ -6,6 +6,7 @@ pub struct Board<T> {
 }
 
 impl<'a, T> Board<T> {
+    #[must_use]
     pub fn new(board: Vec<Vec<T>>) -> Self {
         let bounds = Self::calc_bounds(&board);
         Self { board, bounds }
@@ -20,6 +21,7 @@ impl<'a, T> Board<T> {
     /// assert_eq!(1, *board.get(Vec2D::new(0, 0)));
     /// assert_eq!(2, *board.get(Vec2D::new(1, 0)));
     /// ```
+    #[must_use]
     pub fn get(&self, pos: Vec2D) -> &T {
         self.board
             .get::<usize>(pos.y.try_into().unwrap())
@@ -38,6 +40,7 @@ impl<'a, T> Board<T> {
     /// assert_eq!(false, board.is_in_bounds(Vec2D::new(-1, 0)));
     /// assert_eq!(false, board.is_in_bounds(Vec2D::new(1, 2)));
     /// ```
+    #[must_use]
     pub fn is_in_bounds(&self, pos: Vec2D) -> bool {
         pos.is_in_bounds(self.bounds)
     }
@@ -51,6 +54,7 @@ impl<'a, T> Board<T> {
     /// assert_eq!(1, bounds.y);
     /// assert_eq!(2, bounds.x);
     /// ```
+    #[must_use]
     pub fn get_bounds(&self) -> Vec2D {
         self.bounds
     }

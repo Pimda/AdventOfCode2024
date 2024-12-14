@@ -1,16 +1,18 @@
 use std::collections::VecDeque;
 
-/// Helps to quickly switch between dfs and bfs, using simple Vec and VecDeque
+/// Helps to quickly switch between dfs and bfs, using simple `Vec` and `VecDeque`
 pub enum DirectionalCollection<T> {
     Bfs(VecDeque<T>),
     Dfs(Vec<T>),
 }
 
 impl<T> DirectionalCollection<T> {
+    #[must_use]
     pub fn dfs() -> Self {
         DirectionalCollection::Dfs(vec![])
     }
 
+    #[must_use]
     pub fn bfs() -> Self {
         DirectionalCollection::Bfs(VecDeque::new())
     }
@@ -29,6 +31,7 @@ impl<T> DirectionalCollection<T> {
         }
     }
 
+    #[must_use]
     pub fn len(&self) -> usize {
         match self {
             DirectionalCollection::Bfs(collection) => collection.len(),
@@ -36,6 +39,7 @@ impl<T> DirectionalCollection<T> {
         }
     }
 
+    #[must_use]
     pub fn is_empty(&self) -> bool {
         match self {
             DirectionalCollection::Bfs(collection) => collection.is_empty(),

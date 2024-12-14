@@ -10,7 +10,7 @@ impl Day<Vec<Vec<i32>>, usize, usize> for Impl {
         input
             .lines()
             .map(|line| {
-                line.split(" ")
+                line.split(' ')
                     .map(|val| val.parse().expect("not a number"))
                     .collect()
             })

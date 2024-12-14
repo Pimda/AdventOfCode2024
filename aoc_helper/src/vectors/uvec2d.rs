@@ -13,6 +13,7 @@ pub struct UVec2D {
 }
 
 impl UVec2D {
+    #[must_use]
     pub fn new(x: usize, y: usize) -> Self {
         Self { x, y }
     }

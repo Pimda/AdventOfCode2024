@@ -34,26 +34,25 @@ fn parse(text: &str, mut state: State) -> u32 {
             | ("mul(", Some(_), None, ',') => state.buffer.push(char),
             // buffer num1
             ("mul(", num1, None, char) if char.is_ascii_digit() => {
-                add_digit(num1, char.to_digit(10).unwrap())
+                add_digit(num1, char.to_digit(10).unwrap());
             }
             // buffer num2
             ("mul(,", Some(_), num2, digit) if digit.is_ascii_digit() => {
-                add_digit(num2, digit.to_digit(10).unwrap())
+                add_digit(num2, digit.to_digit(10).unwrap());
             }
             // add to total and reset
             ("mul(,", Some(num1), Some(num2), ')') => {
                 let score = *num1 * *num2;
 
                 state.add_total(score);
-                state.reset()
+                state.reset();
             }
             ("", None, None, 'd')
             | ("d", None, None, 'o')
-            | ("do", None, None, 'n')
+            | ("do", None, None, 'n' | '(')
             | ("don", None, None, '\'')
             | ("don'", None, None, 't')
-            | ("don't", None, None, '(')
-            | ("do", None, None, '(') => {
+            | ("don't", None, None, '(') => {
                 state.buffer.push(char);
             }
             // disable counting
@@ -75,9 +74,9 @@ fn parse(text: &str, mut state: State) -> u32 {
 
 fn add_digit(num: &mut Option<u32>, char: u32) {
     if let Some(v) = num {
-        *num = Some(*v * 10 + char)
+        *num = Some(*v * 10 + char);
     } else {
-        *num = Some(char)
+        *num = Some(char);
     }
 }
 
@@ -93,7 +92,7 @@ struct State {
 impl State {
     fn new(check_enabled: bool) -> Self {
         Self {
-            buffer: "".to_string(),
+            buffer: String::new(),
             num1: None,
             num2: None,
             total: 0,
@@ -103,7 +102,7 @@ impl State {
     }
 
     fn reset(&mut self) {
-        self.buffer = "".to_string();
+        self.buffer = String::new();
         self.num1 = None;
         self.num2 = None;
     }

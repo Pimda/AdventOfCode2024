@@ -7,6 +7,7 @@ pub struct MemoizerCollection<K, V> {
 }
 
 impl<K, V> MemoizerCollection<K, V> {
+    #[must_use]
     pub fn new() -> Self {
         Self {
             map: HashMap::new(),
@@ -30,12 +31,12 @@ impl<K, V> MemoizerCollection<K, V> {
         self.map.entry(key).or_insert(value);
     }
 
-    pub fn get(&mut self, key: K) -> Option<&V>
+    pub fn get(&mut self, key: &K) -> Option<&V>
     where
         K: Hash,
         K: Eq,
     {
-        self.map.get(&key)
+        self.map.get(key)
     }
 }
 

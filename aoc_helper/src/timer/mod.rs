@@ -6,6 +6,6 @@ pub(crate) fn start_timer() -> Instant {
 
 pub(crate) fn stop_timer_and_write(now: Instant, string: &str) {
     let elapsed = now.elapsed();
-    println!("{}", string);
-    println!("Duration: {:#?}", elapsed);
+    println!("{string}");
+    println!("Duration: {elapsed:#?}");
 }
