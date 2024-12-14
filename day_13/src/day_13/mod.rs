@@ -5,7 +5,7 @@ mod test;
 
 pub(crate) struct Impl {}
 
-impl Day<Vec<(Vec2D, Vec2D, Vec2D)>, i32, u64> for Impl {
+impl Day<Vec<(Vec2D, Vec2D, Vec2D)>, i64, i64> for Impl {
     fn parse(&self, input: String) -> Vec<(Vec2D, Vec2D, Vec2D)> {
         let mut lines = input.lines();
         let mut puzzles = vec![];
@@ -25,20 +25,33 @@ impl Day<Vec<(Vec2D, Vec2D, Vec2D)>, i32, u64> for Impl {
         puzzles
     }
 
-    fn part_1(&self, puzzles: &Vec<(Vec2D, Vec2D, Vec2D)>) -> i32 {
+    fn part_1(&self, puzzles: &Vec<(Vec2D, Vec2D, Vec2D)>) -> i64 {
         puzzles
             .iter()
-            .map(|puzzle| calculate_1(*puzzle))
+            .map(|(button_a, button_b, target)| {
+                calculate_answer(button_a, button_b, target.x.into(), target.y.into())
+            })
             .map(|cost| if let Some(cost) = cost { cost } else { 0 })
             .sum()
     }
 
-    fn part_2(&self, board: &Vec<(Vec2D, Vec2D, Vec2D)>) -> u64 {
-        todo![]
+    fn part_2(&self, puzzles: &Vec<(Vec2D, Vec2D, Vec2D)>) -> i64 {
+        puzzles
+            .iter()
+            .map(|(button_a, button_b, target)| {
+                calculate_answer(
+                    button_a,
+                    button_b,
+                    target.x as i64 + 10_000_000_000_000i64,
+                    target.y as i64 + 10_000_000_000_000i64,
+                )
+            })
+            .map(|cost| if let Some(cost) = cost { cost } else { 0 })
+            .sum()
     }
 }
 
-fn calculate_1((button_a, button_b, target): (Vec2D, Vec2D, Vec2D)) -> Option<i32> {
+fn _seek_answer((button_a, button_b, target): (Vec2D, Vec2D, Vec2D)) -> Option<i32> {
     let mut lowest_cost = None;
 
     for count_a in 0..100 {
@@ -58,6 +71,63 @@ fn calculate_1((button_a, button_b, target): (Vec2D, Vec2D, Vec2D)) -> Option<i3
     }
 
     lowest_cost
+}
+
+fn calculate_answer(
+    button_a: &Vec2D,
+    button_b: &Vec2D,
+    target_x: i64,
+    target_y: i64,
+) -> Option<i64> {
+    let button_a_x: i64 = button_a.x.try_into().unwrap();
+    let button_a_y: i64 = button_a.y.try_into().unwrap();
+    let button_b_x: i64 = button_b.x.try_into().unwrap();
+    let button_b_y: i64 = button_b.y.try_into().unwrap();
+
+    let (a1, b1, c1) = vector_to_linear_equation(button_a_x, button_a_y, 0, 0);
+    let (a2, b2, c2) = vector_to_linear_equation(button_b_x, button_b_y, target_x, target_y);
+
+    // Calculate the determinant of the system
+    let det = a1 * b2 - a2 * b1;
+
+    if det == 0 {
+        // Lines are parallel
+        return None;
+    }
+
+    // Using Cramer's Rule to find x and y
+    let x = (b1 * c2 - b2 * c1) / det;
+    let y = (a2 * c1 - a1 * c2) / det;
+
+    // intersection out of range
+    if x < 0 || y < 0 || x > target_x || y > target_y {
+        return None;
+    }
+
+    let count_a = x / button_a_x;
+    let count_b = (target_x - x) / button_b_x;
+
+    if target_x != count_a * button_a_x + count_b * button_b_x
+        || target_y != count_a * button_a_y + count_b * button_b_y
+    {
+        return None;
+    }
+
+    Some(count_a * 3 + count_b)
+}
+
+fn vector_to_linear_equation(
+    vector_x: i64,
+    vector_y: i64,
+    target_x: i64,
+    target_y: i64,
+) -> (i64, i64, i64) {
+    // Calculate the coefficients of the equation a1 * x + b1 * y + c1 = 0
+    let a1 = vector_y;
+    let b1 = -vector_x;
+    let c1 = -(a1 * target_x + b1 * target_y);
+
+    (a1, b1, c1)
 }
 
 fn parse_button(input: &str, button_name: String) -> Vec2D {
