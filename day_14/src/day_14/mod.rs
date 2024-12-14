@@ -75,7 +75,7 @@ impl Day<Vec<(Vec2D, Vec2D)>, usize, i32> for Impl {
         count_quadrant_0 * count_quadrant_1 * count_quadrant_2 * count_quadrant_3
     }
 
-    fn part_2(&self, robots: &Vec<(Vec2D, Vec2D)>) -> i32 {
+    fn part_2(&self, _robots: &Vec<(Vec2D, Vec2D)>) -> i32 {
         // I found these simply by trying and finding a pattern
         let key_1 = 50;
         let key_2 = 95;
@@ -89,20 +89,20 @@ impl Day<Vec<(Vec2D, Vec2D)>, usize, i32> for Impl {
             seconds += 1;
 
             if seconds % height == key_1 && seconds % width == key_2 {
-                let mut new_positions = HashSet::new();
-                for robot in robots {
-                    let new_x = positive_mod(robot.0.x + seconds * robot.1.x, width);
-                    let new_y = positive_mod(robot.0.y + seconds * robot.1.y, height);
-                    new_positions.insert(Vec2D::new(new_x, new_y));
-                }
-                print(height, width, &new_positions);
+                // let mut new_positions = HashSet::new();
+                // for robot in robots {
+                //     let new_x = positive_mod(robot.0.x + seconds * robot.1.x, width);
+                //     let new_y = positive_mod(robot.0.y + seconds * robot.1.y, height);
+                //     new_positions.insert(Vec2D::new(new_x, new_y));
+                // }
+                // print(height, width, &new_positions);
                 return seconds;
             }
         }
     }
 }
 
-fn print(height: i32, width: i32, new_positions: &HashSet<Vec2D>) {
+fn _print(height: i32, width: i32, new_positions: &HashSet<Vec2D>) {
     for y in 0..height {
         for x in 0..width {
             let pos = Vec2D::new(x, y);
