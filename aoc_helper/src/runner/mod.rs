@@ -1,4 +1,6 @@
-use std::fmt::Display;
+use std::fmt::{format, Display};
+
+use colored::Colorize;
 
 use crate::{day::Day, timer};
 
@@ -75,7 +77,9 @@ impl<'a, I, O1, O2> Runner<'a, I, O1, O2> {
             let result = self.day.part_1(input);
             timer::stop_timer_and_write(now, "Part 1");
 
-            println!("{result}");
+            let colored = format!("{result}").cyan();
+
+            println!("{colored}");
             println!();
         }
     }
@@ -89,7 +93,9 @@ impl<'a, I, O1, O2> Runner<'a, I, O1, O2> {
             let result = self.day.part_2(input);
             timer::stop_timer_and_write(now, "Part 2");
 
-            println!("{result}");
+            let colored = format!("{result}").cyan();
+
+            println!("{colored}");
             println!();
         }
     }
