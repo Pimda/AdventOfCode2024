@@ -58,9 +58,7 @@ impl<'a, T> Board<T> {
     pub fn iter_all_coordinates(&'a self) -> impl Iterator<Item = Vec2D> + use<'a, T> {
         let bounds = self.get_bounds();
 
-        (0..bounds.y)
-            .map(move |y| (0..bounds.x).map(move |x| Vec2D::new(x, y)))
-            .flatten()
+        (0..bounds.y).flat_map(move |y| (0..bounds.x).map(move |x| Vec2D::new(x, y)))
     }
 
     fn calc_bounds(board: &[Vec<T>]) -> Vec2D {

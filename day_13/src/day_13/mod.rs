@@ -31,7 +31,7 @@ impl Day<Vec<(Vec2D, Vec2D, Vec2D)>, i64, i64> for Impl {
             .map(|(button_a, button_b, target)| {
                 calculate_answer(button_a, button_b, target.x.into(), target.y.into())
             })
-            .map(|cost| if let Some(cost) = cost { cost } else { 0 })
+            .map(|cost| cost.unwrap_or_default())
             .sum()
     }
 
@@ -46,7 +46,7 @@ impl Day<Vec<(Vec2D, Vec2D, Vec2D)>, i64, i64> for Impl {
                     target.y as i64 + 10_000_000_000_000i64,
                 )
             })
-            .map(|cost| if let Some(cost) = cost { cost } else { 0 })
+            .map(|cost| cost.unwrap_or_default())
             .sum()
     }
 }
@@ -79,10 +79,10 @@ fn calculate_answer(
     target_x: i64,
     target_y: i64,
 ) -> Option<i64> {
-    let button_a_x: i64 = button_a.x.try_into().unwrap();
-    let button_a_y: i64 = button_a.y.try_into().unwrap();
-    let button_b_x: i64 = button_b.x.try_into().unwrap();
-    let button_b_y: i64 = button_b.y.try_into().unwrap();
+    let button_a_x: i64 = button_a.x.into();
+    let button_a_y: i64 = button_a.y.into();
+    let button_b_x: i64 = button_b.x.into();
+    let button_b_y: i64 = button_b.y.into();
 
     let (a1, b1, c1) = vector_to_linear_equation(button_a_x, button_a_y, 0, 0);
     let (a2, b2, c2) = vector_to_linear_equation(button_b_x, button_b_y, target_x, target_y);

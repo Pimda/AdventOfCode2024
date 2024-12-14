@@ -9,16 +9,15 @@ impl Day<Vec<u64>, usize, u64> for Impl {
     fn parse(&self, input: String) -> Vec<u64> {
         input
             .chars()
-            .map(|c| c.to_digit(10).unwrap().try_into().unwrap())
+            .map(|c| c.to_digit(10).unwrap().into())
             .collect()
     }
 
     fn part_1(&self, files: &Vec<u64>) -> usize {
         let mut disk = vec![];
-        let mut id = 0;
 
         // fill disk
-        for window in files.chunks(2) {
+        for (id, window) in files.chunks(2).enumerate() {
             if let [file, space] = window {
                 for _ in 0..*file {
                     disk.push(Some(id));
@@ -31,7 +30,6 @@ impl Day<Vec<u64>, usize, u64> for Impl {
                     disk.push(Some(id));
                 }
             }
-            id += 1;
         }
 
         let mut rev_iter = disk.iter().enumerate().rev();
@@ -67,14 +65,13 @@ impl Day<Vec<u64>, usize, u64> for Impl {
     fn part_2(&self, map: &Vec<u64>) -> u64 {
         let mut files = vec![];
         let mut empty_space = vec![];
-        let mut id = 0;
         let mut index = 0;
 
         // fill disk
-        for window in map.chunks(2) {
+        for (id, window) in map.chunks(2).enumerate() {
             if let [size, space] = window {
                 files.push(File {
-                    id,
+                    id: id.try_into().unwrap(),
                     index,
                     size: *size,
                 });
@@ -87,13 +84,12 @@ impl Day<Vec<u64>, usize, u64> for Impl {
                 index += space;
             } else if let [size] = window {
                 files.push(File {
-                    id,
+                    id: id.try_into().unwrap(),
                     index,
                     size: *size,
                 });
                 index += size;
             }
-            id += 1;
         }
 
         // move files

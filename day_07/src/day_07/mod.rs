@@ -84,5 +84,5 @@ fn concat_numbers(accumulator: u64, num: u64) -> u64 {
 }
 
 fn get_num(numbers: &[u64], index: usize) -> u64 {
-    numbers.iter().nth(index).unwrap().to_owned()
+    numbers.get(index).unwrap().to_owned()
 }

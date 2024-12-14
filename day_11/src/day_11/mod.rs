@@ -45,7 +45,7 @@ fn blink(node: u64, times: u32, memoizer: &mut MemoizerCollection<(u64, u32), us
 
     // default => multiply by 2024
     let count = blink(node * 2024, times - 1, memoizer);
-    return memoizer.add_and_return((node, times), count);
+    memoizer.add_and_return((node, times), count)
 }
 
 fn split_if_even_digits(num: u64) -> Option<(u64, u64)> {

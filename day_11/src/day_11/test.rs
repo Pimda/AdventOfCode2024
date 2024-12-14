@@ -18,5 +18,5 @@ fn part_1_works_for_input() {
 
 #[test]
 fn part_2_works_for_input() {
-    Runner::from_input_file(&Impl {}).assert_part_2(0);
+    Runner::from_input_file(&Impl {}).assert_part_2(255758646442399);
 }

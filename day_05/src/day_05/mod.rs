@@ -76,7 +76,7 @@ fn follows_rule(pages: &Vec<u32>, rule: &Rule) -> bool {
     true
 }
 
-fn order_pile(pages: &Vec<u32>, rules: &[Rule]) -> Vec<u32> {
+fn order_pile(pages: &[u32], rules: &[Rule]) -> Vec<u32> {
     let mut temp = pages.to_vec();
 
     while !is_pile_ordered(&temp, rules) {

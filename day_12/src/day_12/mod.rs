@@ -51,8 +51,7 @@ fn get_cost(
     let mut sides = 0;
     let mut area = 0;
 
-    while stack.len() > 0 {
-        let coord = stack.pop().unwrap();
+    while let Some(coord) = stack.pop() {
         if visited.contains(&coord) {
             continue;
         }
@@ -98,8 +97,7 @@ fn get_discounted_cost(
     let mut area = 0;
     let mut side_pieces = vec![];
 
-    while stack.len() > 0 {
-        let coord = stack.pop().unwrap();
+    while let Some(coord) = stack.pop() {
         if visited.contains(&coord) {
             continue;
         }
@@ -159,7 +157,7 @@ fn get_discounted_cost(
 }
 
 fn count_edges(
-    side_pieces: &Vec<(Vec2D, Vec2D)>,
+    side_pieces: &[(Vec2D, Vec2D)],
     direction: Vec2D,
     column_selector: &dyn Fn((Vec2D, Vec2D)) -> i32,
     row_selector: &dyn Fn((Vec2D, Vec2D)) -> i32,
@@ -168,7 +166,7 @@ fn count_edges(
         .iter()
         .filter(|(_, d)| *d == direction)
         .collect();
-    all.sort_by(|left, right| column_selector(**left).cmp(&column_selector(**right)));
+    all.sort_by_key(|left| column_selector(**left));
 
     let mut buffer: Vec<&(Vec2D, Vec2D)> = vec![];
     let mut column_id = -1;
@@ -186,7 +184,7 @@ fn count_edges(
             buffer.push(coord);
         }
     }
-    if buffer.len() > 0 {
+    if !buffer.is_empty() {
         sides += count_sides(buffer, row_selector);
     }
 
@@ -197,7 +195,7 @@ fn count_sides(
     mut column: Vec<&(Vec2D, Vec2D)>,
     row_selector: &dyn Fn((Vec2D, Vec2D)) -> i32,
 ) -> u64 {
-    column.sort_by(|left, right| row_selector(**left).cmp(&row_selector(**right)));
+    column.sort_by_key(|left| row_selector(**left));
 
     let mut count = 0;
     let mut row_id = -2;

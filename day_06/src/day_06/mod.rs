@@ -73,8 +73,7 @@ impl Day<Board<char>, usize, usize> for Impl {
 fn find_guard(board: &Board<char>) -> Vec2D {
     board
         .iter_all_coordinates()
-        .filter(|pos| *board.get(*pos) == '^')
-        .next()
+        .find(|pos| *board.get(*pos) == '^')
         .unwrap()
 }
 
