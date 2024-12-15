@@ -1,5 +1,6 @@
 use crate::vectors::Vec2D;
 
+#[derive(Clone)]
 pub struct Board<T> {
     board: Vec<Vec<T>>,
     bounds: Vec2D,
@@ -28,6 +29,14 @@ impl<'a, T> Board<T> {
             .unwrap()
             .get::<usize>(pos.x.try_into().unwrap())
             .unwrap()
+    }
+
+    pub fn set(&mut self, pos: Vec2D, value: T) {
+        let x: usize = pos.x.try_into().unwrap();
+        let y: usize = pos.y.try_into().unwrap();
+
+        let line: &mut Vec<T> = &mut self.board[y];
+        line[x] = value;
     }
 
     /// Checks whether a point is inside the board
@@ -70,5 +79,17 @@ impl<'a, T> Board<T> {
         let height = board.len();
 
         Vec2D::new(width.try_into().unwrap(), height.try_into().unwrap())
+    }
+
+    pub fn print(&self)
+    where
+        T: std::fmt::Display,
+    {
+        for line in &self.board {
+            for item in line {
+                print!("{item}");
+            }
+            println!()
+        }
     }
 }
