@@ -80,8 +80,11 @@ impl<'a, T> Board<T> {
 
         Vec2D::new(width.try_into().unwrap(), height.try_into().unwrap())
     }
+    pub fn get_vec(self) -> Vec<Vec<T>> {
+        self.board
+    }
 
-    pub fn print(&self)
+    pub fn print(&self, wait_for_user: bool)
     where
         T: std::fmt::Display,
     {
@@ -90,6 +93,13 @@ impl<'a, T> Board<T> {
                 print!("{item}");
             }
             println!()
+        }
+
+        if wait_for_user {
+            let mut _s = "".to_string();
+            std::io::stdin()
+                .read_line(&mut _s) // Read input from the user.
+                .expect("Failed to read line"); // Handle potential errors.
         }
     }
 }
