@@ -30,28 +30,15 @@ impl Day<Board<char>, i32, i32> for Impl {
                 return score;
             }
 
-            let next_pos = pos + current_dir;
-            if *board.get(next_pos) != '#' {
-                let score = score + 1;
-                push_if_lowest_score(&mut lowest_cost_to_reach, next_pos, current_dir, score, &mut queue);
-            }
+            add_next_step(pos, 1, current_dir, board, score, &mut lowest_cost_to_reach, &mut queue);
 
             let mut cloned_dir = current_dir.clone();
             cloned_dir.rotate_left();
-            let next_pos = pos + cloned_dir;
-            if *board.get(next_pos) != '#' {
-                let score = score + 1000 + 1;
-                push_if_lowest_score(&mut lowest_cost_to_reach, next_pos, cloned_dir, score, &mut queue);
-            }
+            add_next_step(pos, 1001, cloned_dir, board, score, &mut lowest_cost_to_reach, &mut queue);
 
             let mut cloned_dir = current_dir.clone();
             cloned_dir.rotate_right();
-            let next_pos = pos + cloned_dir;
-            if *board.get(next_pos) != '#' {
-                let score = score + 1000 + 1;
-                push_if_lowest_score(&mut lowest_cost_to_reach, next_pos, cloned_dir, score, &mut queue);
-
-            }
+            add_next_step(pos, 1001, cloned_dir, board, score, &mut lowest_cost_to_reach, &mut queue);
         }
     }
 
@@ -60,9 +47,31 @@ impl Day<Board<char>, i32, i32> for Impl {
     }
 }
 
+fn add_next_step(pos: Vec2D, cost: i32, dir: Vec2D, board: &Board<char>, score: i32, lowest_cost_to_reach: &mut HashMap<(Vec2D, Vec2D), i32>, queue: &mut PriorityQueue<i32, (Vec2D, Vec2D, i32)>) {
+    let next_pos = pos + dir;
+    if *board.get(next_pos) != '#' {
+        let score = score + cost;
+        push_if_lowest_score(lowest_cost_to_reach, next_pos, dir, score, queue);
+    }
+}
+
 fn push_if_lowest_score(lowest_cost_to_reach: &mut HashMap<(Vec2D, Vec2D), i32>, pos: Vec2D, dir: Vec2D, score: i32, queue: &mut PriorityQueue<i32, (Vec2D, Vec2D, i32)>) {
     if let Some(prev_score) = lowest_cost_to_reach.get_mut(&(pos, dir)) {
         if score < *prev_score{
+            *prev_score = score;
+
+            queue.push((pos, dir, score), score);
+        }
+    }
+    else{
+        lowest_cost_to_reach.insert((pos, dir), score);
+        queue.push((pos, dir, score), score);
+    }
+}
+
+fn push_if_equals_lowest_score(lowest_cost_to_reach: &mut HashMap<(Vec2D, Vec2D), i32>, pos: Vec2D, dir: Vec2D, score: i32, queue: &mut PriorityQueue<i32, (Vec2D, Vec2D, i32)>) {
+    if let Some(prev_score) = lowest_cost_to_reach.get_mut(&(pos, dir)) {
+        if score <= *prev_score{
             *prev_score = score;
 
             queue.push((pos, dir, score), score);
