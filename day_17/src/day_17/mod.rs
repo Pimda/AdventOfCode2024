@@ -9,33 +9,22 @@ impl Day<(u64, u64, u64, Vec<u64>), String, u64> for Impl {
     fn parse(&self, input: String) -> (u64, u64, u64, Vec<u64>) {
         let mut lines = input.lines();
 
-        let reg_a = lines
-            .next()
-            .unwrap()
-            .trim_start_matches("Register A: ")
+        let reg_a = next_trim_prefix(&mut lines, "Register A: ")
             .parse()
             .unwrap();
 
-        let reg_b = lines
-            .next()
-            .unwrap()
-            .trim_start_matches("Register B: ")
+        let reg_b = next_trim_prefix(&mut lines, "Register B: ")
             .parse()
             .unwrap();
 
-        let reg_c = lines
-            .next()
-            .unwrap()
-            .trim_start_matches("Register C: ")
+        let reg_c = next_trim_prefix(&mut lines, "Register C: ")
             .parse()
             .unwrap();
 
+        // skip empty line
         lines.next();
 
-        let commands = lines
-            .next()
-            .unwrap()
-            .trim_start_matches("Program: ")
+        let commands = next_trim_prefix(&mut lines, "Program: ")
             .split(',')
             .map(|num| num.parse().unwrap())
             .collect();
@@ -48,15 +37,9 @@ impl Day<(u64, u64, u64, Vec<u64>), String, u64> for Impl {
     }
 
     fn part_2(&self, (_reg_a, reg_b, reg_c, commands): &(u64, u64, u64, Vec<u64>)) -> u64 {
-        //target 2,4,1,1,7,5,0,3,1,4,4,4,5,5,3,0
-
-        //too high, but correct ending ;P 12990411753294847
-
         // So what I did is iterate per trillions first, only matching the last fourish numbers
         // Then looking both ways i tried looking with lower steps if I could find more and more numbers
         // Until in the end I found this value (and some much larger ones, since counting is hard ;P)
-
-        // let mut i: u64 = 202975183645226;
 
         // Following algorithm somewhat looks like what I did manually
         // Parameters were set to optimize for speed
@@ -86,6 +69,10 @@ impl Day<(u64, u64, u64, Vec<u64>), String, u64> for Impl {
             i += step;
         }
     }
+}
+
+fn next_trim_prefix<'a>(lines: &'a mut std::str::Lines<'_>, prefix: &str) -> &'a str {
+    lines.next().unwrap().trim_start_matches(prefix)
 }
 
 fn execute(
