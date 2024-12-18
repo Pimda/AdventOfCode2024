@@ -30,44 +30,47 @@ impl Day<Vec<Vec2D>, u32, Vec2D> for Impl {
     fn part_2(&self, bytes: &Vec<Vec2D>) -> Vec2D {
         let (size, skip) = determine_params(bytes);
 
-        // from part 1 we know that we can at least skip 1024 iterations
-        for (i, _byte) in bytes.iter().enumerate().skip(skip) {
-            if solve_maze(bytes, size, i + 1).is_none() {
-                return bytes[i];
+        // Since we know that at first we can solve the maze
+        // and after some point we can't, we can binary search the solution
+        let mut lower = skip;
+        let mut upper = bytes.len();
+
+        while lower < upper {
+            let middle = (upper + lower) / 2;
+
+            if solve_maze(bytes, size, middle + 1).is_none() {
+                upper = middle;
+            } else {
+                lower = middle + 1;
             }
         }
 
-        panic!("No blocks found")
+        bytes[lower]
     }
 }
 
 fn determine_params(bytes: &Vec<Vec2D>) -> (usize, usize) {
-    if bytes.len() < 1000 {
+    if bytes.len() < 100 {
         return (7, 12);
     }
     return (71, 1024);
 }
 
 fn solve_maze(bytes: &Vec<Vec2D>, size: usize, iterations: usize) -> Option<u32> {
-    let board_content = std::iter::repeat(std::iter::repeat('.').take(size).collect())
-        .take(size)
-        .collect();
-    let mut board = Board::new(board_content);
-    for (i, byte) in bytes.iter().enumerate() {
-        if i == iterations {
-            break;
-        }
-        board.set(*byte, '#');
-    }
+    let board = create_board(bytes, size, iterations);
+
+    let directions = navigation::get_adjecent_directions();
 
     let start_pos = Vec2D::new(0, 0);
-    let end: i32 = size.try_into().unwrap();
-    let target = Vec2D::new(end - 1, end - 1);
+    let size: i32 = size.try_into().unwrap();
+    let target = Vec2D::new(size - 1, size - 1);
+
     let mut priority_queue = PriorityQueue::new();
     priority_queue.push((start_pos, 0), 0);
+
     let mut visited_spaces = HashMap::new();
     visited_spaces.insert(start_pos, 0);
-    let directions = navigation::get_adjecent_directions();
+
     loop {
         let lowest = priority_queue.pop_lowest();
 
@@ -86,22 +89,40 @@ fn solve_maze(bytes: &Vec<Vec2D>, size: usize, iterations: usize) -> Option<u32>
 
                 if let Some(old_score) = visited_spaces.get(&new_pos) {
                     if new_score >= *old_score {
-                        continue;
+                        {
+                            continue;
+                        }
                     }
                 }
 
-                if let Some(old_score) = visited_spaces.get(&new_pos) {
-                    if score < *old_score {
+                match visited_spaces.get(&new_pos) {
+                    Some(old_score) if score < *old_score => {
                         visited_spaces.insert(new_pos, new_score);
                         priority_queue.push((new_pos, new_score), new_score);
                     }
-                } else {
-                    visited_spaces.insert(new_pos, new_score);
-                    priority_queue.push((new_pos, new_score), new_score);
+                    None => {
+                        visited_spaces.insert(new_pos, new_score);
+                        priority_queue.push((new_pos, new_score), new_score);
+                    }
+                    _ => panic!("invalid state"),
                 }
             }
         } else {
             return None;
         }
     }
+}
+
+fn create_board(bytes: &Vec<Vec2D>, size: usize, iterations: usize) -> Board<char> {
+    let board_content = std::iter::repeat(std::iter::repeat('.').take(size).collect())
+        .take(size)
+        .collect();
+    let mut board = Board::new(board_content);
+    for (i, byte) in bytes.iter().enumerate() {
+        if i == iterations {
+            break;
+        }
+        board.set(*byte, '#');
+    }
+    board
 }
