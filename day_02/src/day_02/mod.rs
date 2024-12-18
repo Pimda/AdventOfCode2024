@@ -18,7 +18,10 @@ impl Day<Vec<Vec<i32>>, usize, usize> for Impl {
     }
 
     fn part_1(&self, lists: &Vec<Vec<i32>>) -> usize {
-        lists.iter().filter(is_smoothly_moving).count()
+        lists
+            .iter()
+            .filter(|list| is_smoothly_moving(list.iter()))
+            .count()
     }
 
     fn part_2(&self, lists: &Vec<Vec<i32>>) -> usize {
@@ -26,39 +29,40 @@ impl Day<Vec<Vec<i32>>, usize, usize> for Impl {
     }
 }
 
-fn is_smoothly_moving(list: &&Vec<i32>) -> bool {
-    list.windows(2)
-        .map(two_array_to_tuple)
-        .all(is_smoothly_increasing)
-        || list
-            .windows(2)
-            .map(two_array_to_tuple)
-            .all(is_smoothly_decreasing)
+fn is_smoothly_moving<'a, I>(mut iter: I) -> bool
+where
+    I: Iterator<Item = &'a i32>,
+{
+    let mut all_increasing = true;
+    let mut all_decreasing = true;
+
+    let mut first = iter.next().unwrap();
+
+    for next in iter {
+        let second = next;
+        let tuple = (*first, *second);
+
+        all_increasing &= is_smoothly_increasing(tuple);
+        all_decreasing &= is_smoothly_decreasing(tuple);
+
+        if !all_increasing && !all_decreasing {
+            return false;
+        }
+        first = second;
+    }
+
+    true
 }
 
 fn is_smoothly_moving_with_buffer(list: &&Vec<i32>) -> bool {
-    for i in 0..list.len() {
-        let option = list
-            .iter()
-            .enumerate()
-            .filter(|(index, _)| *index != i)
-            .map(|(_, val)| *val)
-            .collect();
-
-        if is_smoothly_moving(&&option) {
-            return true;
-        }
-    }
-
-    false
-}
-
-fn two_array_to_tuple(pair: &[i32]) -> (i32, i32) {
-    if let [lhs, rhs] = pair {
-        (*lhs, *rhs)
-    } else {
-        panic!("Supplied array is not of length 2")
-    }
+    (0..list.len()).any(|i| {
+        is_smoothly_moving(
+            list.iter()
+                .enumerate()
+                .filter(|(index, _)| *index != i)
+                .map(|(_, val)| val),
+        )
+    })
 }
 
 fn is_smoothly_increasing((lhs, rhs): (i32, i32)) -> bool {
