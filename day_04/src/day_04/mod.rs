@@ -23,19 +23,14 @@ impl Day<Board<char>, usize, usize> for Impl {
         ];
 
         // Sum all XMAS counts of all rows
-        (0..board.get_bounds().y)
-            .map(|y| {
-                // Count all instances of XMAS and sum them per row
-                (0..board.get_bounds().x)
-                    .map(|x| {
-                        let position = Vec2D::new(x, y);
-
-                        directions
-                            .into_iter()
-                            .filter(|direction| is_word(board, position, *direction, "XMAS"))
-                            .count()
-                    })
-                    .sum::<usize>()
+        board
+            .iter_all_coordinates()
+            .filter(|coord| *board.get(*coord) == 'X')
+            .map(|coord| {
+                directions
+                    .into_iter()
+                    .filter(|direction| is_word(board, coord, *direction, "XMAS"))
+                    .count()
             })
             .sum()
     }
@@ -48,15 +43,11 @@ impl Day<Board<char>, usize, usize> for Impl {
             (Vec2D::new(-1, 1), Vec2D::new(1, -1)),
         ];
 
-        // Sum the X-MAS counts of all rows
-        (0..board.get_bounds().y)
-            .map(|y| {
-                // Filter row for all positions containing an X-MAS and count them
-                (0..board.get_bounds().x)
-                    .filter(|x| is_x_mas(offset_directions, board, Vec2D::new(*x, y)))
-                    .count()
-            })
-            .sum()
+        board
+            .iter_all_coordinates()
+            .filter(|coord| *board.get(*coord) == 'A')
+            .filter(|coord| is_x_mas(offset_directions, board, *coord))
+            .count()
     }
 }
 
