@@ -50,7 +50,7 @@ impl Day<(u64, u64, u64, Vec<u64>), String, u64> for Impl {
     fn part_2(&self, (_reg_a, reg_b, reg_c, commands): &(u64, u64, u64, Vec<u64>)) -> u64 {
         //target 2,4,1,1,7,5,0,3,1,4,4,4,5,5,3,0
 
-        //too high, but correct end ;P 12990411753294847
+        //too high, but correct ending ;P 12990411753294847
 
         // So what I did is iterate per trillions first, only matching the last fourish numbers
         // Then looking both ways i tried looking with lower steps if I could find more and more numbers
@@ -59,23 +59,24 @@ impl Day<(u64, u64, u64, Vec<u64>), String, u64> for Impl {
         // let mut i: u64 = 202975183645226;
 
         // Following algorithm somewhat looks like what I did manually
-
-        let mut step = 1_000_000_000_000u64;
+        // Parameters were set to optimize for speed
+        // This is unlikely to find all answers for all versions of the input
+        let mut step = 7_000_000_000_000u64;
         let mut skip = 14;
 
         let mut i = 0;
 
+        let target = to_string(commands);
+
         loop {
             let result = execute(i, *reg_b, *reg_c, commands, 0);
-
             let part: Vec<u64> = commands.iter().map(|v| v.to_owned()).skip(skip).collect();
 
-            if to_string(&result) == to_string(commands) {
+            if to_string(&result) == target {
                 return i;
             }
 
             if result.len() == 16 && result.ends_with(&part[..]) {
-                // println!("Step found {}", i);
                 skip -= 1;
                 i -= step;
                 step /= 10;
