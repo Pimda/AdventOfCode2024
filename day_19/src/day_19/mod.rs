@@ -1,3 +1,5 @@
+use std::string::ToString;
+
 use aoc_helper::{collections::MemoizerCollection, Day};
 
 #[cfg(test)]
@@ -13,17 +15,17 @@ impl Day<(Vec<String>, Vec<String>), usize, usize> for Impl {
             .next()
             .unwrap()
             .split(", ")
-            .map(|val| val.to_string())
+            .map(ToString::to_string)
             .collect();
 
         lines.next();
-        (parts, lines.map(|line| line.to_string()).collect())
+        (parts, lines.map(ToString::to_string).collect())
     }
 
     fn part_1(&self, (parts, lines): &(Vec<String>, Vec<String>)) -> usize {
         lines
             .iter()
-            .filter(|line| can_match(line, 0, parts))
+            .filter(|line| can_match(line, line.len(), 0, parts))
             .count()
     }
 
@@ -32,14 +34,14 @@ impl Day<(Vec<String>, Vec<String>), usize, usize> for Impl {
             .iter()
             .map(|line| {
                 let mut memoizer = MemoizerCollection::new();
-                count_matches(line, 0, parts, &mut memoizer)
+                count_matches(line, line.len(), 0, parts, &mut memoizer)
             })
             .sum()
     }
 }
 
-fn can_match(line: &String, matched_len: usize, parts: &Vec<String>) -> bool {
-    if line.len() == matched_len {
+fn can_match(line: &String, line_len: usize, matched_len: usize, parts: &Vec<String>) -> bool {
+    if line_len == matched_len {
         return true;
     }
 
@@ -48,7 +50,7 @@ fn can_match(line: &String, matched_len: usize, parts: &Vec<String>) -> bool {
         let part_chars = part.chars();
 
         if iters_match(line_chars, part_chars) {
-            can_match(line, matched_len + part.len(), parts)
+            can_match(line, line_len, matched_len + part.len(), parts)
         } else {
             false
         }
@@ -57,11 +59,12 @@ fn can_match(line: &String, matched_len: usize, parts: &Vec<String>) -> bool {
 
 fn count_matches(
     line: &String,
+    line_len: usize,
     matched_len: usize,
     parts: &[String],
     memoizer: &mut MemoizerCollection<usize, usize>,
 ) -> usize {
-    if line.len() == matched_len {
+    if line_len == matched_len {
         return 1;
     }
 
@@ -76,7 +79,7 @@ fn count_matches(
             let part_chars = part.chars();
 
             if iters_match(line_chars, part_chars) {
-                count_matches(line, matched_len + part.len(), parts, memoizer)
+                count_matches(line, line_len, matched_len + part.len(), parts, memoizer)
             } else {
                 0
             }
@@ -98,7 +101,7 @@ fn iters_match(
             (Some(line_char), Some(part_char)) if line_char != part_char => {
                 return false;
             }
-            (None, None) | (Some(_), None) => {
+            (None | Some(_), None) => {
                 return true;
             }
             (None, Some(_)) => {
