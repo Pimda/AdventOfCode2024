@@ -7,6 +7,7 @@
 ///assert_eq!(-1, positive_mod(3, -4));
 ///assert_eq!(-3, positive_mod(-3, -4));
 ///```
+#[must_use]
 pub fn positive_mod(value: i32, modulus: i32) -> i32 {
     ((value % modulus) + modulus) % modulus
 }

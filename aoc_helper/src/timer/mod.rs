@@ -1,5 +1,6 @@
-use colored::*;
 use std::time::Instant;
+
+use colored::{ColoredString, Colorize};
 
 pub(crate) fn start_timer() -> Instant {
     Instant::now()
