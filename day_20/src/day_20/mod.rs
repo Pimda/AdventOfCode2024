@@ -1,4 +1,4 @@
-use std::collections::{HashMap, VecDeque};
+use std::collections::{HashMap, HashSet, VecDeque};
 
 use aoc_helper::{board::Board, collections::CountCollection, navigation, vectors::Vec2D, Day};
 
@@ -29,7 +29,7 @@ impl Day<Board<char>, usize, usize> for Impl {
             }
         }
 
-        print_scores(cuts_score);
+        // print_scores(cuts_score);
 
         valid_cuts
     }
@@ -51,17 +51,17 @@ impl Day<Board<char>, usize, usize> for Impl {
             }
         }
 
-        print_scores(cuts_score);
+        // print_scores(cuts_score);
 
         valid_cuts
     }
 }
 
-fn print_scores(cuts_score: CountCollection<i32>) {
+fn _print_scores(cuts_score: &CountCollection<i32>) {
     for i in 1..=100 {
         let count = cuts_score.count(&i);
         if count != 0 {
-            println!("{} cuts save {} steps", count, i);
+            println!("{count} cuts save {i} steps");
         }
     }
 }
@@ -94,7 +94,7 @@ fn solve_maze(
                     continue;
                 }
 
-                if scores.get(&new_pos).is_some() {
+                if scores.contains_key(&new_pos) {
                     // we should never find a lower score, so skip seen positions
                     continue;
                 }
@@ -127,8 +127,8 @@ fn get_cuts(
     directions: [Vec2D; 4],
 ) -> Vec<i32> {
     if let Some(&original_score) = scores.get(&coord) {
-        let mut visited_positions = HashMap::new();
-        visited_positions.insert(coord, 0);
+        let mut visited_positions = HashSet::new();
+        visited_positions.insert(coord);
         let mut queue = VecDeque::new();
         queue.push_back((coord, 0));
         let mut shortcuts = HashMap::new();
@@ -139,33 +139,27 @@ fn get_cuts(
                 continue;
             }
 
-            for direction in directions.iter() {
+            let new_steps = steps + 1;
+
+            for direction in &directions {
                 let new_coord = current_coord + *direction;
-                let new_steps = steps + 1;
 
                 // Skip out-of-bounds
-                if !board.is_in_bounds(new_coord) {
+                // Ensure no revisits with longer paths
+                if !board.is_in_bounds(new_coord) || visited_positions.contains(&new_coord) {
                     continue;
                 }
 
-                // Ensure no revisits with longer paths
-                if let Some(old_steps) = visited_positions.get_mut(&new_coord) {
-                    if *old_steps <= new_steps {
-                        continue;
-                    }
-                    *old_steps = new_steps
-                } else {
-                    visited_positions.insert(new_coord, new_steps);
-                }
-
+                visited_positions.insert(new_coord);
                 queue.push_back((new_coord, new_steps));
 
+                // Note, we're not updating scores as we're acting very confident that we will not find a better solution later on
                 if let Some(&score) = scores.get(&new_coord) {
-                    let diff = score - (original_score + new_steps);
-                    shortcuts
-                        .entry(new_coord)
-                        .and_modify(|v: &mut i32| *v = (*v).max(diff))
-                        .or_insert(diff);
+                    if score > 0 {
+                        shortcuts
+                            .entry(new_coord)
+                            .or_insert(score - (original_score + new_steps));
+                    }
                 }
             }
         }
@@ -177,7 +171,7 @@ fn get_cuts(
 
 fn _print_shortcut_map(
     board: &Board<char>,
-    visited_positions: HashMap<Vec2D, i32>,
+    visited_positions: &HashMap<Vec2D, i32>,
     shortcuts: &HashMap<Vec2D, i32>,
 ) {
     for y in 0..board.get_bounds().y {
@@ -185,17 +179,17 @@ fn _print_shortcut_map(
             let coord = Vec2D::new(x, y);
             let char = board.get(coord);
             if let Some(score) = visited_positions.get(&coord) {
-                if *char != '#' {
-                    let shortcut = shortcuts.get(&coord).unwrap();
-                    print!("{shortcut:3} ")
+                if *char == '#' {
+                    print!("[{score:2}]",);
                 } else {
-                    print!("[{score:2}]",)
+                    let shortcut = shortcuts.get(&coord).unwrap();
+                    print!("{shortcut:3} ");
                 }
             } else {
-                print!("  {char} ")
+                print!("  {char} ");
             }
         }
-        println!()
+        println!();
     }
     println!();
 }
