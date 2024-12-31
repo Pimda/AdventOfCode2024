@@ -21,7 +21,7 @@ impl Day<Board<char>, usize, usize> for Impl {
         let mut valid_cuts = 0;
         let mut cuts_score = CountCollection::new();
         for coord in board.iter_all_coordinates() {
-            for cut in get_cuts_2(board, &scores, coord, 2, directions) {
+            for cut in get_cuts(board, &scores, coord, 2, directions) {
                 cuts_score.add(cut);
                 if cut >= 100 {
                     valid_cuts += 1;
@@ -43,7 +43,7 @@ impl Day<Board<char>, usize, usize> for Impl {
         let mut valid_cuts = 0;
         let mut cuts_score = CountCollection::new();
         for coord in board.iter_all_coordinates() {
-            for cut in get_cuts_2(board, &scores, coord, 20, directions) {
+            for cut in get_cuts(board, &scores, coord, 20, directions) {
                 cuts_score.add(cut);
                 if cut >= 100 {
                     valid_cuts += 1;
@@ -126,79 +126,13 @@ fn get_cuts(
     max_steps: i32,
     directions: [Vec2D; 4],
 ) -> Vec<i32> {
-    if let Some(original_score) = scores.get(&coord) {
-        let mut visited_positions = HashMap::new();
-        visited_positions.insert(coord, 0);
-        let mut queue = VecDeque::new();
-        queue.push_back((coord, 0));
-        let mut shortcuts = HashMap::new();
-
-        loop {
-            if let Some((coord, steps)) = queue.pop_front() {
-                if steps >= max_steps {
-                    continue;
-                }
-
-                for direction in directions {
-                    let new_coord = coord + direction;
-                    let new_steps = steps + 1;
-
-                    if !board.is_in_bounds(new_coord) {
-                        continue;
-                    }
-
-                    let char = board.get(new_coord);
-
-                    if *char == '#' {
-                        if let Some(old_steps) = visited_positions.get(&new_coord) {
-                            if new_steps >= *old_steps {
-                                continue;
-                            }
-                        }
-
-                        visited_positions.insert(new_coord, new_steps);
-                        queue.push_back((new_coord, new_steps));
-                    } else {
-                        if new_steps >= max_steps {
-                            continue;
-                        }
-
-                        let score = scores.get(&new_coord).unwrap();
-                        let diff = score - (original_score + new_steps);
-
-                        if diff > 0 {
-                            shortcuts
-                                .entry(new_coord)
-                                .and_modify(|v| {
-                                    if diff > *v {
-                                        *v = diff
-                                    }
-                                })
-                                .or_insert(diff);
-                        }
-                    }
-                }
-            } else {
-                return shortcuts.into_values().collect();
-            }
-        }
-    }
-    vec![]
-}
-
-fn get_cuts_2(
-    board: &Board<char>,
-    scores: &HashMap<Vec2D, i32>,
-    coord: Vec2D,
-    max_steps: i32,
-    directions: [Vec2D; 4],
-) -> Vec<i32> {
     if let Some(&original_score) = scores.get(&coord) {
         let mut visited_positions = HashMap::new();
         visited_positions.insert(coord, 0);
         let mut queue = VecDeque::new();
         queue.push_back((coord, 0));
         let mut shortcuts = HashMap::new();
+        shortcuts.insert(coord, 0);
 
         while let Some((current_coord, steps)) = queue.pop_front() {
             if steps >= max_steps {
@@ -215,34 +149,53 @@ fn get_cuts_2(
                 }
 
                 // Ensure no revisits with longer paths
-                if visited_positions
-                    .get(&new_coord)
-                    .map_or(false, |&old_steps| new_steps >= old_steps)
-                {
-                    continue;
+                if let Some(old_steps) = visited_positions.get_mut(&new_coord) {
+                    if *old_steps <= new_steps {
+                        continue;
+                    }
+                    *old_steps = new_steps
+                } else {
+                    visited_positions.insert(new_coord, new_steps);
                 }
 
-                let char = board.get(new_coord);
+                queue.push_back((new_coord, new_steps));
 
-                if *char == '#' {
-                    // Continue walking through walls
-                    visited_positions.insert(new_coord, new_steps);
-                    queue.push_back((new_coord, new_steps));
-                } else {
-                    // Landed on a walkable space, check for a valid cut
-                    if let Some(&score) = scores.get(&new_coord) {
-                        let diff = score - (original_score + new_steps);
-                        if diff > 0 {
-                            shortcuts
-                                .entry(new_coord)
-                                .and_modify(|v: &mut i32| *v = (*v).max(diff))
-                                .or_insert(diff);
-                        }
-                    }
+                if let Some(&score) = scores.get(&new_coord) {
+                    let diff = score - (original_score + new_steps);
+                    shortcuts
+                        .entry(new_coord)
+                        .and_modify(|v: &mut i32| *v = (*v).max(diff))
+                        .or_insert(diff);
                 }
             }
         }
+
         return shortcuts.into_values().collect();
     }
     vec![]
+}
+
+fn _print_shortcut_map(
+    board: &Board<char>,
+    visited_positions: HashMap<Vec2D, i32>,
+    shortcuts: &HashMap<Vec2D, i32>,
+) {
+    for y in 0..board.get_bounds().y {
+        for x in 0..board.get_bounds().x {
+            let coord = Vec2D::new(x, y);
+            let char = board.get(coord);
+            if let Some(score) = visited_positions.get(&coord) {
+                if *char != '#' {
+                    let shortcut = shortcuts.get(&coord).unwrap();
+                    print!("{shortcut:3} ")
+                } else {
+                    print!("[{score:2}]",)
+                }
+            } else {
+                print!("  {char} ")
+            }
+        }
+        println!()
+    }
+    println!();
 }
