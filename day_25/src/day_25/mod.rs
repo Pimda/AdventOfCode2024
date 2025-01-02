@@ -5,7 +5,7 @@ mod test;
 
 pub(crate) struct Impl {}
 
-impl Day<(Vec<Vec<i32>>, Vec<Vec<i32>>), usize, ()> for Impl {
+impl Day<(Vec<Vec<i32>>, Vec<Vec<i32>>), usize, u32> for Impl {
     fn parse(&self, input: String) -> (Vec<Vec<i32>>, Vec<Vec<i32>>) {
         let mut keys = Vec::new();
         let mut locks = Vec::new();
@@ -37,11 +37,11 @@ impl Day<(Vec<Vec<i32>>, Vec<Vec<i32>>), usize, ()> for Impl {
                     .zip(key.iter())
                     .all(|(lock, key)| lock + key <= 7)
                 {
-                    println!("{lock:?}, {key:?} fit");
+                    // println!("{lock:?}, {key:?} fit");
 
                     count += 1;
                 } else {
-                    println!("{lock:?}, {key:?} overlap");
+                    // println!("{lock:?}, {key:?} overlap");
                 }
             }
         }
@@ -49,7 +49,9 @@ impl Day<(Vec<Vec<i32>>, Vec<Vec<i32>>), usize, ()> for Impl {
         count
     }
 
-    fn part_2(&self, (_, _): &(Vec<Vec<i32>>, Vec<Vec<i32>>)) -> () {}
+    fn part_2(&self, (_, _): &(Vec<Vec<i32>>, Vec<Vec<i32>>)) -> u32 {
+        0
+    }
 }
 
 fn parse_locks_or_keys(
